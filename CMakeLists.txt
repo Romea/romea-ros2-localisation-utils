@@ -87,6 +87,8 @@ install(
 
 #install(TARGETS ${PROJECT_NAME}_node DESTINATION lib/${PROJECT_NAME})
 
+option(BUILD_TESTING "BUILD WITH TESTS" ON)
+
 if(BUILD_TESTING)
 
     find_package(ament_lint_auto REQUIRED)
