@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROMEA_LOCALISATION_UTILS__FILTER__LOCALISATION_UPDATER_INTERFACE_BASE_HPP_
-#define ROMEA_LOCALISATION_UTILS__FILTER__LOCALISATION_UPDATER_INTERFACE_BASE_HPP_
+#ifndef ROMEA_LOCALISATION_UTILS__FILTER__UPDATER_INTERFACE_BASE_HPP_
+#define ROMEA_LOCALISATION_UTILS__FILTER__UPDATER_INTERFACE_BASE_HPP_
 
 
 // ros
@@ -28,19 +28,21 @@ namespace romea
 {
 namespace ros2
 {
+namespace localisation
+{
 
-
-class LocalisationUpdaterInterfaceBase
+class UpdaterInterfaceBase
 {
 public:
-  LocalisationUpdaterInterfaceBase() {}
+  UpdaterInterfaceBase() {}
 
   virtual bool heartbeat_callback(const core::Duration & duration) = 0;
 
   virtual core::DiagnosticReport get_report() = 0;
 };
 
+}  // namespace localisation
 }  // namespace ros2
 }  // namespace romea
 
-#endif  // ROMEA_LOCALISATION_UTILS__FILTER__LOCALISATION_UPDATER_INTERFACE_BASE_HPP_
+#endif  // ROMEA_LOCALISATION_UTILS__FILTER__UPDATER_INTERFACE_BASE_HPP_

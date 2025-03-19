@@ -21,7 +21,7 @@
 // romea
 #include "romea_common_utils/conversions/position2d_conversions.hpp"
 #include "romea_localisation_msgs/msg/observation_position2_d_stamped.hpp"
-#include "romea_core_localisation/ObservationPosition.hpp"
+#include "romea_core_localisation/observation_position.hpp"
 
 namespace romea
 {
@@ -40,18 +40,18 @@ void to_ros_msg(
 
 
 void to_ros_msg(
-  const core::ObservationPosition & observation,
+  const core::localisation::ObservationPosition & observation,
   romea_localisation_msgs::msg::ObservationPosition2D & msg);
 
 void to_ros_msg(
   const rclcpp::Time & stamp,
   const std::string & frame_id,
-  const core::ObservationPosition & observation,
+  const core::localisation::ObservationPosition & observation,
   romea_localisation_msgs::msg::ObservationPosition2DStamped & msg);
 
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationPosition2DStamped & msg,
-  core::ObservationPosition & observation);
+  core::localisation::ObservationPosition & observation);
 
 }  // namespace ros2
 }  // namespace romea

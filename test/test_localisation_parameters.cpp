@@ -23,8 +23,9 @@
 // romea
 #include "../test/test_utils.hpp"
 #include "../test/test_helper.h"
-#include "romea_localisation_utils/filter/localisation_parameters.hpp"
+#include "romea_localisation_utils/filter/parameters.hpp"
 
+using namespace romea::ros2::localisation;  // NOLINT
 
 //-----------------------------------------------------------------------------
 class TestLocalisationFilterParams : public ::testing::Test
@@ -58,48 +59,46 @@ protected:
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetPredictorMaximalDeadReckoningTravelledDistance)
 {
-  romea::ros2::declare_predictor_maximal_dead_reckoning_travelled_distance(
+  declare_predictor_maximal_dead_reckoning_travelled_distance(
     node, std::numeric_limits<double>::max());
-  EXPECT_DOUBLE_EQ(
-    romea::ros2::get_predictor_maximal_dead_reckoning_travelled_distance(node), 10.0);
+  EXPECT_DOUBLE_EQ(get_predictor_maximal_dead_reckoning_travelled_distance(node), 10.0);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetPredictorMaximalDeadReckoningElapsedTime)
 {
-  romea::ros2::declare_predictor_maximal_dead_reckoning_elapsed_time(
+  declare_predictor_maximal_dead_reckoning_elapsed_time(
     node, std::numeric_limits<double>::max());
-  EXPECT_DOUBLE_EQ(
-    romea::ros2::get_predictor_maximal_dead_reckoning_elapsed_time(node), 3.0);
+  EXPECT_DOUBLE_EQ(get_predictor_maximal_dead_reckoning_elapsed_time(node), 3.0);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetPredictorMaximalCircularErrorProbable)
 {
-  romea::ros2::declare_predictor_maximal_circular_error_probable(
+  declare_predictor_maximal_circular_error_probable(
     node, std::numeric_limits<double>::max());
-  EXPECT_DOUBLE_EQ(romea::ros2::get_predictor_maximal_circular_error_probable(node), 0.2);
+  EXPECT_DOUBLE_EQ(get_predictor_maximal_circular_error_probable(node), 0.2);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetFilterNumberOfParticles)
 {
-  romea::ros2::declare_filter_number_of_particles(node);
-  EXPECT_EQ(romea::ros2::get_filter_number_of_particles(node), 200u);
+  declare_filter_number_of_particles(node);
+  EXPECT_EQ(get_filter_number_of_particles(node), 200u);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetFilterStatePoolSize)
 {
-  romea::ros2::declare_filter_state_pool_size(node);
-  EXPECT_EQ(romea::ros2::get_filter_state_pool_size(node), 1000u);
+  declare_filter_state_pool_size(node);
+  EXPECT_EQ(get_filter_state_pool_size(node), 1000u);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetUpdaterTriggerMode)
 {
-  romea::ros2::declare_updater_trigger_mode(node, "position_updater", "once");
-  EXPECT_EQ(romea::ros2::get_updater_trigger_mode(node, "position_updater"), "always");
+  declare_updater_trigger_mode(node, "position_updater", "once");
+  EXPECT_EQ(get_updater_trigger_mode(node, "position_updater"), "always");
 }
 
 // //-----------------------------------------------------------------------------
@@ -119,32 +118,31 @@ TEST_F(TestLocalisationFilterParams, checkGetUpdaterTriggerMode)
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetUpdaterMinimalRate)
 {
-  romea::ros2::declare_updater_minimal_rate(node, "angular_speed_updater", 20u);
-  EXPECT_EQ(romea::ros2::get_updater_minimal_rate(node, "angular_speed_updater"), 10u);
+  declare_updater_minimal_rate(node, "angular_speed_updater", 20u);
+  EXPECT_EQ(get_updater_minimal_rate(node, "angular_speed_updater"), 10u);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetUpdaterEmptyMinimalRate)
 {
-  romea::ros2::declare_updater_minimal_rate(node, "bar", 10u);
-  EXPECT_EQ(romea::ros2::get_updater_minimal_rate(node, "bar"), 10u);
+  declare_updater_minimal_rate(node, "bar", 10u);
+  EXPECT_EQ(get_updater_minimal_rate(node, "bar"), 10u);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetUpdaterMahalanobisDistance)
 {
-  romea::ros2::declare_updater_mahalanobis_distance_rejection_threshold(
+  declare_updater_mahalanobis_distance_rejection_threshold(
     node, "position_updater", std::numeric_limits<double>::max());
   EXPECT_DOUBLE_EQ(
-    romea::ros2::get_updater_mahalanobis_distance_rejection_threshold(node, "position_updater"), 3);
+    get_updater_mahalanobis_distance_rejection_threshold(node, "position_updater"), 3);
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetUpdaterEmptyMahalanobisDistance)
 {
-  romea::ros2::declare_updater_mahalanobis_distance_rejection_threshold(node, "bar", 3);
-  EXPECT_DOUBLE_EQ(
-    romea::ros2::get_updater_mahalanobis_distance_rejection_threshold(node, "bar"), 3);
+  declare_updater_mahalanobis_distance_rejection_threshold(node, "bar", 3);
+  EXPECT_DOUBLE_EQ(get_updater_mahalanobis_distance_rejection_threshold(node, "bar"), 3);
 }
 
 //-----------------------------------------------------------------------------

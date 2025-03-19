@@ -23,16 +23,15 @@ namespace romea
 namespace ros2
 {
 
-
 //-----------------------------------------------------------------------------
 void to_ros_msg(
   const core::Twist2D & twist,
   romea_localisation_msgs::msg::ObservationTwist2D & msg)
 {
-  to_ros_msg(twist, msg.twist);
-  msg.level_arm.x = 0;
-  msg.level_arm.y = 0;
-  msg.level_arm.z = 0;
+  ros2::to_ros_msg(twist, msg.twist);
+  msg.lever_arm.x = 0;
+  msg.lever_arm.y = 0;
+  msg.lever_arm.z = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -49,15 +48,19 @@ void to_ros_msg(
 
 //-----------------------------------------------------------------------------
 void to_ros_msg(
-  const core::ObservationTwist & observation,
+  const core::localisation::ObservationTwist & observation,
   romea_localisation_msgs::msg::ObservationTwist2D & msg)
 {
-  msg.twist.linear_speeds.x = observation.Y(core::ObservationTwist::LINEAR_SPEED_X_BODY);
-  msg.twist.linear_speeds.y = observation.Y(core::ObservationTwist::LINEAR_SPEED_Y_BODY);
-  msg.twist.angular_speed = observation.Y(core::ObservationTwist::ANGULAR_SPEED_Z_BODY);
-  msg.level_arm.x = observation.levelArm.x();
-  msg.level_arm.y = observation.levelArm.y();
-  msg.level_arm.z = observation.levelArm.z();
+  msg.twist.linear_speeds.x =
+    observation.Y(core::localisation::ObservationTwist::LINEAR_SPEED_X_BODY);
+  msg.twist.linear_speeds.y =
+    observation.Y(core::localisation::ObservationTwist::LINEAR_SPEED_Y_BODY);
+  msg.twist.angular_speed =
+    observation.Y(core::localisation::ObservationTwist::ANGULAR_SPEED_Z_BODY);
+
+  msg.lever_arm.x = observation.lever_arm.x();
+  msg.lever_arm.y = observation.lever_arm.y();
+  msg.lever_arm.z = observation.lever_arm.z();
 
   for (size_t n = 0; n < 9; ++n) {
     msg.twist.covariance[n] = observation.R()(n);
@@ -68,7 +71,7 @@ void to_ros_msg(
 void to_ros_msg(
   const rclcpp::Time & stamp,
   const std::string & frame_id,
-  const core::ObservationTwist & observation,
+  const core::localisation::ObservationTwist & observation,
   romea_localisation_msgs::msg::ObservationTwist2DStamped & msg)
 {
   msg.header.frame_id = frame_id;
@@ -79,18 +82,18 @@ void to_ros_msg(
 //-----------------------------------------------------------------------------
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationTwist2DStamped & msg,
-  core::ObservationTwist & observation)
+  core::localisation::ObservationTwist & observation)
 {
-  observation.Y(core::ObservationTwist::LINEAR_SPEED_X_BODY) =
+  observation.Y(core::localisation::ObservationTwist::LINEAR_SPEED_X_BODY) =
     msg.observation_twist.twist.linear_speeds.x;
-  observation.Y(core::ObservationTwist::LINEAR_SPEED_Y_BODY) =
+  observation.Y(core::localisation::ObservationTwist::LINEAR_SPEED_Y_BODY) =
     msg.observation_twist.twist.linear_speeds.y;
-  observation.Y(core::ObservationTwist::ANGULAR_SPEED_Z_BODY) =
+  observation.Y(core::localisation::ObservationTwist::ANGULAR_SPEED_Z_BODY) =
     msg.observation_twist.twist.angular_speed;
   observation.R() = Eigen::Matrix3d(msg.observation_twist.twist.covariance.data());
-  observation.levelArm.x() = msg.observation_twist.level_arm.x;
-  observation.levelArm.y() = msg.observation_twist.level_arm.y;
-  observation.levelArm.z() = msg.observation_twist.level_arm.z;
+  observation.lever_arm.x() = msg.observation_twist.lever_arm.x;
+  observation.lever_arm.y() = msg.observation_twist.lever_arm.y;
+  observation.lever_arm.z() = msg.observation_twist.lever_arm.z;
 }
 
 }  // namespace ros2

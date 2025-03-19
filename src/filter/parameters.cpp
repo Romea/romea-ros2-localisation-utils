@@ -18,7 +18,7 @@
 #include <string>
 
 // romea
-#include "romea_localisation_utils/filter/localisation_parameters.hpp"
+#include "romea_localisation_utils/filter/parameters.hpp"
 #include "romea_common_utils/params/node_parameters.hpp"
 
 // #include <ros/file_log.h>
@@ -50,6 +50,8 @@ const char UPDATER_MAHALANOBIS_DISTANCE_REJECTION_THRESHOLD_PARAM_NAME[] =
 namespace romea
 {
 namespace ros2
+{
+namespace localisation
 {
 
 //-----------------------------------------------------------------------------
@@ -241,5 +243,6 @@ double get_updater_mahalanobis_distance_rejection_threshold(
     UPDATER_MAHALANOBIS_DISTANCE_REJECTION_THRESHOLD_PARAM_NAME);
 }
 
+}  // namespace localisation
 }  // namespace ros2
 }  // namespace romea

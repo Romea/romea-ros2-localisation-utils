@@ -21,7 +21,6 @@
 #include "../test/test_utils.hpp"
 #include "romea_localisation_utils/conversions/observation_angular_speed_conversions.hpp"
 
-
 //-----------------------------------------------------------------------------
 class TestObsAngularSpeedConversion : public ::testing::Test
 {
@@ -43,7 +42,7 @@ public:
 
   rclcpp::Time stamp;
   std::string frame_id;
-  romea::core::ObservationAngularSpeed romea_obs_angular_speed;
+  romea::core::localisation::ObservationAngularSpeed romea_obs_angular_speed;
   romea_localisation_msgs::msg::ObservationAngularSpeedStamped ros_obs_angular_speed_msg;
 };
 
@@ -64,7 +63,7 @@ TEST_F(TestObsAngularSpeedConversion, fromRomeato_ros_msg)
 //-----------------------------------------------------------------------------
 TEST_F(TestObsAngularSpeedConversion, fromRosMsgtoObs)
 {
-  romea::core::ObservationAngularSpeed romea_obs_angular_speed_bis;
+  romea::core::localisation::ObservationAngularSpeed romea_obs_angular_speed_bis;
   romea::ros2::extract_obs(ros_obs_angular_speed_msg, romea_obs_angular_speed_bis);
 
   EXPECT_DOUBLE_EQ(romea_obs_angular_speed_bis.Y(), romea_obs_angular_speed.Y());

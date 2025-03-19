@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROMEA_LOCALISATION_UTILS__FILTER__LOCALISATION_PARAMETERS_HPP_
-#define ROMEA_LOCALISATION_UTILS__FILTER__LOCALISATION_PARAMETERS_HPP_
+#ifndef ROMEA_LOCALISATION_UTILS__FILTER__PARAMETERS_HPP_
+#define ROMEA_LOCALISATION_UTILS__FILTER__PARAMETERS_HPP_
 
 // std
 #include <string>
@@ -30,7 +30,8 @@ namespace romea
 {
 namespace ros2
 {
-
+namespace localisation
+{
 
 void declare_predictor_parameters(
   std::shared_ptr<rclcpp::Node> node,
@@ -150,7 +151,8 @@ double get_updater_mahalanobis_distance_rejection_threshold(
   std::shared_ptr<rclcpp::Node> node,
   std::string updater_name);
 
+}  // namespace localisation
 }  // namespace ros2
 }  // namespace romea
 
-#endif  // ROMEA_LOCALISATION_UTILS__FILTER__LOCALISATION_PARAMETERS_HPP_
+#endif  // ROMEA_LOCALISATION_UTILS__FILTER__PARAMETERS_HPP_

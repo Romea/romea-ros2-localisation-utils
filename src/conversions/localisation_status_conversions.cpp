@@ -21,7 +21,7 @@ namespace ros2
 
 //-----------------------------------------------------------------------------
 void to_ros_msg(
-  const core::LocalisationFSMState & fsm_state,
+  const core::localisation::FSMState & fsm_state,
   romea_localisation_msgs::msg::LocalisationStatus & msg)
 {
   msg.status = static_cast<unsigned int>(fsm_state);

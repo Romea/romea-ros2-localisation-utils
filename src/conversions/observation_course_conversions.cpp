@@ -25,7 +25,7 @@ namespace ros2
 
 //-----------------------------------------------------------------------------
 void to_ros_msg(
-  const core::ObservationCourse & observation,
+  const core::localisation::ObservationCourse & observation,
   romea_localisation_msgs::msg::ObservationCourse & msg)
 {
   msg.angle = observation.Y();
@@ -36,7 +36,7 @@ void to_ros_msg(
 void to_ros_msg(
   const rclcpp::Time & stamp,
   const std::string & frame_id,
-  const core::ObservationCourse & observation,
+  const core::localisation::ObservationCourse & observation,
   romea_localisation_msgs::msg::ObservationCourseStamped & msg)
 {
   msg.header.stamp = stamp;
@@ -47,7 +47,7 @@ void to_ros_msg(
 //-----------------------------------------------------------------------------
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationCourseStamped & msg,
-  core::ObservationCourse & observation)
+  core::localisation::ObservationCourse & observation)
 {
   observation.Y() = msg.observation_course.angle;
   observation.R() = msg.observation_course.std * msg.observation_course.std;

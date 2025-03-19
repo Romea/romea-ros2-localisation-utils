@@ -40,7 +40,7 @@ add_library(${PROJECT_NAME} SHARED
   src/conversions/observation_position_conversions.cpp
   src/conversions/observation_range_conversions.cpp
   src/conversions/observation_twist_conversions.cpp
-  src/filter/localisation_parameters.cpp)
+  src/filter/parameters.cpp)
 
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp

@@ -19,7 +19,7 @@
 #include <string>
 
 // romea
-#include "romea_core_localisation/ObservationCourse.hpp"
+#include "romea_core_localisation/observation_course.hpp"
 #include "romea_common_utils/conversions/time_conversions.hpp"
 #include "romea_localisation_msgs/msg/observation_course_stamped.hpp"
 
@@ -29,18 +29,18 @@ namespace ros2
 {
 
 void to_ros_msg(
-  const core::ObservationCourse & observation,
+  const core::localisation::ObservationCourse & observation,
   romea_localisation_msgs::msg::ObservationCourse & msg);
 
 void to_ros_msg(
   const rclcpp::Time & stamp,
   const std::string & frame_id,
-  const core::ObservationCourse & observation,
+  const core::localisation::ObservationCourse & observation,
   romea_localisation_msgs::msg::ObservationCourseStamped & msg);
 
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationCourseStamped & msg,
-  core::ObservationCourse & observation);
+  core::localisation::ObservationCourse & observation);
 
 }  // namespace ros2
 }  // namespace romea

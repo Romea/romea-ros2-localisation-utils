@@ -28,10 +28,10 @@ void to_ros_msg(
   const core::Pose2D & pose,
   romea_localisation_msgs::msg::ObservationPose2D & msg)
 {
-  to_ros_msg(pose, msg.pose);
-  msg.level_arm.x = 0;
-  msg.level_arm.y = 0;
-  msg.level_arm.z = 0;
+  ros2::to_ros_msg(pose, msg.pose);
+  msg.lever_arm.x = 0;
+  msg.lever_arm.y = 0;
+  msg.lever_arm.z = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -48,15 +48,15 @@ void to_ros_msg(
 
 //-----------------------------------------------------------------------------
 void to_ros_msg(
-  const core::ObservationPose & observation,
+  const core::localisation::ObservationPose & observation,
   romea_localisation_msgs::msg::ObservationPose2D & msg)
 {
-  msg.pose.position.x = observation.Y(core::ObservationPose::POSITION_X);
-  msg.pose.position.y = observation.Y(core::ObservationPose::POSITION_Y);
-  msg.pose.yaw = observation.Y(core::ObservationPose::ORIENTATION_Z);
-  msg.level_arm.x = observation.levelArm.x();
-  msg.level_arm.y = observation.levelArm.y();
-  msg.level_arm.z = observation.levelArm.z();
+  msg.pose.position.x = observation.Y(core::localisation::ObservationPose::POSITION_X);
+  msg.pose.position.y = observation.Y(core::localisation::ObservationPose::POSITION_Y);
+  msg.pose.yaw = observation.Y(core::localisation::ObservationPose::ORIENTATION_Z);
+  msg.lever_arm.x = observation.lever_arm.x();
+  msg.lever_arm.y = observation.lever_arm.y();
+  msg.lever_arm.z = observation.lever_arm.z();
 
   for (size_t n = 0; n < 9; ++n) {
     msg.pose.covariance[n] = observation.R()(n);
@@ -67,7 +67,7 @@ void to_ros_msg(
 void to_ros_msg(
   const rclcpp::Time & stamp,
   const std::string & frame_id,
-  const core::ObservationPose & observation,
+  const core::localisation::ObservationPose & observation,
   romea_localisation_msgs::msg::ObservationPose2DStamped & msg)
 {
   msg.header.frame_id = frame_id;
@@ -78,16 +78,19 @@ void to_ros_msg(
 //-----------------------------------------------------------------------------
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationPose2DStamped & msg,
-  core::ObservationPose & observation)
+  core::localisation::ObservationPose & observation)
 {
-  observation.Y(core::ObservationPose::POSITION_X) = msg.observation_pose.pose.position.x;
-  observation.Y(core::ObservationPose::POSITION_Y) = msg.observation_pose.pose.position.y;
-  observation.Y(core::ObservationPose::ORIENTATION_Z) = msg.observation_pose.pose.yaw;
-  observation.R() = Eigen::Matrix3d(msg.observation_pose.pose.covariance.data());
-  observation.levelArm.x() = msg.observation_pose.level_arm.x;
-  observation.levelArm.y() = msg.observation_pose.level_arm.y;
-  observation.levelArm.z() = msg.observation_pose.level_arm.z;
-}
+  observation.Y(core::localisation::ObservationPose::POSITION_X) =
+    msg.observation_pose.pose.position.x;
+  observation.Y(core::localisation::ObservationPose::POSITION_Y) =
+    msg.observation_pose.pose.position.y;
+  observation.Y(core::localisation::ObservationPose::ORIENTATION_Z) =
+    msg.observation_pose.pose.yaw;
 
+  observation.R() = Eigen::Matrix3d(msg.observation_pose.pose.covariance.data());
+  observation.lever_arm.x() = msg.observation_pose.lever_arm.x;
+  observation.lever_arm.y() = msg.observation_pose.lever_arm.y;
+  observation.lever_arm.z() = msg.observation_pose.lever_arm.z;
+}
 }  // namespace ros2
 }  // namespace romea

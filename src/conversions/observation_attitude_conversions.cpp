@@ -26,11 +26,11 @@ namespace ros2
 
 //-----------------------------------------------------------------------------
 void to_ros_msg(
-  const core::ObservationAttitude & observation,
+  const core::localisation::ObservationAttitude & observation,
   romea_localisation_msgs::msg::ObservationAttitude & msg)
 {
-  msg.roll_angle = observation.Y(core::ObservationAttitude::ROLL);
-  msg.pitch_angle = observation.Y(core::ObservationAttitude::PITCH);
+  msg.roll_angle = observation.Y(core::localisation::ObservationAttitude::ROLL);
+  msg.pitch_angle = observation.Y(core::localisation::ObservationAttitude::PITCH);
 
   for (size_t n = 0; n < 4; ++n) {
     msg.covariance[n] = observation.R()(n);
@@ -41,7 +41,7 @@ void to_ros_msg(
 void to_ros_msg(
   const rclcpp::Time & stamp,
   const std::string & frame_id,
-  const core::ObservationAttitude & observation,
+  const core::localisation::ObservationAttitude & observation,
   romea_localisation_msgs::msg::ObservationAttitudeStamped & msg)
 {
   msg.header.frame_id = frame_id;
@@ -53,10 +53,12 @@ void to_ros_msg(
 //-----------------------------------------------------------------------------
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationAttitudeStamped & msg,
-  core::ObservationAttitude & observation)
+  core::localisation::ObservationAttitude & observation)
 {
-  observation.Y(core::ObservationAttitude::ROLL) = msg.observation_attitude.roll_angle;
-  observation.Y(core::ObservationAttitude::PITCH) = msg.observation_attitude.pitch_angle;
+  observation.Y(core::localisation::ObservationAttitude::ROLL) =
+    msg.observation_attitude.roll_angle;
+  observation.Y(core::localisation::ObservationAttitude::PITCH) =
+    msg.observation_attitude.pitch_angle;
   observation.R() = Eigen::Matrix2d(msg.observation_attitude.covariance.data());
 }
 

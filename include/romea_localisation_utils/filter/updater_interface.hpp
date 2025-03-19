@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROMEA_LOCALISATION_UTILS__FILTER__LOCALISATION_UPDATER_INTERFACE_HPP_
-#define ROMEA_LOCALISATION_UTILS__FILTER__LOCALISATION_UPDATER_INTERFACE_HPP_
+#ifndef ROMEA_LOCALISATION_UTILS__FILTER__UPDATER_INTERFACE_HPP_
+#define ROMEA_LOCALISATION_UTILS__FILTER__UPDATER_INTERFACE_HPP_
 
 // std
 #include <memory>
@@ -22,8 +22,8 @@
 
 // romea
 #include "romea_common_utils/qos.hpp"
-#include "romea_localisation_utils/filter/localisation_parameters.hpp"
-#include "romea_localisation_utils/filter/localisation_updater_interface_base.hpp"
+#include "romea_localisation_utils/filter/parameters.hpp"
+#include "romea_localisation_utils/filter/updater_interface_base.hpp"
 #include "romea_localisation_utils/conversions/observation_conversions.hpp"
 
 
@@ -31,9 +31,11 @@ namespace romea
 {
 namespace ros2
 {
+namespace localisation
+{
 
 template<typename Filter_, typename Updater_, typename Msg>
-class LocalisationUpdaterInterface : public LocalisationUpdaterInterfaceBase
+class UpdaterInterface : public UpdaterInterfaceBase
 {
 public:
   using Filter = Filter_;
@@ -41,7 +43,7 @@ public:
   using Observation = typename Updater_::Observation;
 
 public:
-  LocalisationUpdaterInterface(
+  UpdaterInterface(
     std::shared_ptr<rclcpp::Node> node,
     const std::string & topic_name);
 
@@ -63,17 +65,16 @@ private:
 
 //-----------------------------------------------------------------------------
 template<typename Filter_, typename Updater_, typename Msg>
-LocalisationUpdaterInterface<Filter_, Updater_, Msg>::LocalisationUpdaterInterface(
+UpdaterInterface<Filter_, Updater_, Msg>::UpdaterInterface(
   std::shared_ptr<rclcpp::Node> node,
   const std::string & topic_name)
-: LocalisationUpdaterInterfaceBase(),
+: UpdaterInterfaceBase(),
   filter_(nullptr),
   updater_(nullptr),
   sub_()
 {
   auto callback = std::bind(
-    &LocalisationUpdaterInterface::process_message,
-    this, std::placeholders::_1);
+    &UpdaterInterface::process_message, this, std::placeholders::_1);
 
   rclcpp::SubscriptionOptions options;
   options.callback_group = node->create_callback_group(
@@ -87,7 +88,7 @@ LocalisationUpdaterInterface<Filter_, Updater_, Msg>::LocalisationUpdaterInterfa
 
 //-----------------------------------------------------------------------------
 template<typename Filter_, typename Updater_, typename Msg>
-void LocalisationUpdaterInterface<Filter_, Updater_, Msg>::load_updater(
+void UpdaterInterface<Filter_, Updater_, Msg>::load_updater(
   std::unique_ptr<Updater> updater)
 {
   updater_.swap(updater);
@@ -95,7 +96,7 @@ void LocalisationUpdaterInterface<Filter_, Updater_, Msg>::load_updater(
 
 //-----------------------------------------------------------------------------
 template<typename Filter_, typename Updater_, typename Msg>
-void LocalisationUpdaterInterface<Filter_, Updater_, Msg>::register_filter(
+void UpdaterInterface<Filter_, Updater_, Msg>::register_filter(
   std::shared_ptr<Filter> filter)
 {
   filter_ = filter;
@@ -103,12 +104,12 @@ void LocalisationUpdaterInterface<Filter_, Updater_, Msg>::register_filter(
 
 //-----------------------------------------------------------------------------
 template<class Filter_, class Updater_, class Msg>
-void LocalisationUpdaterInterface<Filter_, Updater_, Msg>::process_message(
+void UpdaterInterface<Filter_, Updater_, Msg>::process_message(
   typename Msg::ConstSharedPtr msg)
 {
-  core::Duration duration = extract_duration(*msg);
+  core::Duration duration = romea::ros2::extract_duration(*msg);
 
-  Observation observation = extract_obs<Observation>(*msg);
+  Observation observation = romea::ros2::extract_obs<Observation>(*msg);
 
   auto updateFunction = std::bind(
     &Updater::update,
@@ -123,17 +124,17 @@ void LocalisationUpdaterInterface<Filter_, Updater_, Msg>::process_message(
 
 //-----------------------------------------------------------------------------
 template<class Filter_, class Updater_, class Msg>
-bool LocalisationUpdaterInterface<Filter_, Updater_, Msg>::heartbeat_callback(
+bool UpdaterInterface<Filter_, Updater_, Msg>::heartbeat_callback(
   const core::Duration & duration)
 {
-  return updater_->heartBeatCallback(duration);
+  return updater_->heart_beat_callback(duration);
 }
 
 //-----------------------------------------------------------------------------
 template<class Filter_, class Updater_, class Msg>
-core::DiagnosticReport LocalisationUpdaterInterface<Filter_, Updater_, Msg>::get_report()
+core::DiagnosticReport UpdaterInterface<Filter_, Updater_, Msg>::get_report()
 {
-  return updater_->getReport();
+  return updater_->get_report();
 }
 
 //-----------------------------------------------------------------------------
@@ -150,8 +151,8 @@ std::unique_ptr<UpdaterInterface> make_updater_interface(
   return interface;
 }
 
-
+}  // namespace localisation
 }  // namespace ros2
 }  // namespace romea
 
-#endif  // ROMEA_LOCALISATION_UTILS__FILTER__LOCALISATION_UPDATER_INTERFACE_HPP_
+#endif  // ROMEA_LOCALISATION_UTILS__FILTER__UPDATER_INTERFACE_HPP_

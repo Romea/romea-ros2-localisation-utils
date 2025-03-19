@@ -22,7 +22,6 @@
 #include "test_utils.hpp"
 #include "romea_localisation_utils/conversions/observation_attitude_conversions.hpp"
 
-
 //-----------------------------------------------------------------------------
 class TestObsAttitudeConversion : public ::testing::Test
 {
@@ -37,15 +36,15 @@ public:
 
   void SetUp()override
   {
-    romea_obs_attitude.Y(romea::core::ObservationAttitude::ROLL) = 1;
-    romea_obs_attitude.Y(romea::core::ObservationAttitude::PITCH) = 2;
+    romea_obs_attitude.Y(romea::core::localisation::ObservationAttitude::ROLL) = 1;
+    romea_obs_attitude.Y(romea::core::localisation::ObservationAttitude::PITCH) = 2;
     fillEigenCovariance(romea_obs_attitude.R());
     romea::ros2::to_ros_msg(stamp, frame_id, romea_obs_attitude, romea_obs_attitude_msg);
   }
 
   rclcpp::Time stamp;
   std::string frame_id;
-  romea::core::ObservationAttitude romea_obs_attitude;
+  romea::core::localisation::ObservationAttitude romea_obs_attitude;
   romea_localisation_msgs::msg::ObservationAttitudeStamped romea_obs_attitude_msg;
 };
 
@@ -56,10 +55,10 @@ TEST_F(TestObsAttitudeConversion, fromRomeato_ros_msg)
   EXPECT_STREQ(romea_obs_attitude_msg.header.frame_id.c_str(), frame_id.c_str());
   EXPECT_DOUBLE_EQ(
     romea_obs_attitude_msg.observation_attitude.roll_angle,
-    romea_obs_attitude.Y(romea::core::ObservationAttitude::ROLL));
+    romea_obs_attitude.Y(romea::core::localisation::ObservationAttitude::ROLL));
   EXPECT_DOUBLE_EQ(
     romea_obs_attitude_msg.observation_attitude.pitch_angle,
-    romea_obs_attitude.Y(romea::core::ObservationAttitude::PITCH));
+    romea_obs_attitude.Y(romea::core::localisation::ObservationAttitude::PITCH));
 
   isSame(romea_obs_attitude_msg.observation_attitude.covariance, romea_obs_attitude.R());
 }
@@ -67,15 +66,15 @@ TEST_F(TestObsAttitudeConversion, fromRomeato_ros_msg)
 //-----------------------------------------------------------------------------
 TEST_F(TestObsAttitudeConversion, fromRosMsgtoObs)
 {
-  romea::core::ObservationAttitude romea_obs_attitude_bis;
+  romea::core::localisation::ObservationAttitude romea_obs_attitude_bis;
   romea::ros2::extract_obs(romea_obs_attitude_msg, romea_obs_attitude_bis);
 
   EXPECT_DOUBLE_EQ(
-    romea_obs_attitude_bis.Y(romea::core::ObservationAttitude::ROLL),
-    romea_obs_attitude.Y(romea::core::ObservationAttitude::ROLL));
+    romea_obs_attitude_bis.Y(romea::core::localisation::ObservationAttitude::ROLL),
+    romea_obs_attitude.Y(romea::core::localisation::ObservationAttitude::ROLL));
   EXPECT_DOUBLE_EQ(
-    romea_obs_attitude_bis.Y(romea::core::ObservationAttitude::PITCH),
-    romea_obs_attitude.Y(romea::core::ObservationAttitude::PITCH));
+    romea_obs_attitude_bis.Y(romea::core::localisation::ObservationAttitude::PITCH),
+    romea_obs_attitude.Y(romea::core::localisation::ObservationAttitude::PITCH));
 
   isSame(romea_obs_attitude_bis.R(), romea_obs_attitude.R());
 }

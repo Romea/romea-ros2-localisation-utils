@@ -39,18 +39,18 @@ public:
   {
     romea_obs_range.Y() = 1;
     romea_obs_range.R() = 4;
-    romea_obs_range.initiatorPosition.x() = 1;
-    romea_obs_range.initiatorPosition.y() = 2;
-    romea_obs_range.initiatorPosition.z() = 3;
-    romea_obs_range.responderPosition.x() = 4;
-    romea_obs_range.responderPosition.y() = 5;
-    romea_obs_range.responderPosition.z() = 6;
+    romea_obs_range.initiator_position.x() = 1;
+    romea_obs_range.initiator_position.y() = 2;
+    romea_obs_range.initiator_position.z() = 3;
+    romea_obs_range.responder_position.x() = 4;
+    romea_obs_range.responder_position.y() = 5;
+    romea_obs_range.responder_position.z() = 6;
     romea::ros2::to_ros_msg(stamp, frame_id, romea_obs_range, ros_obs_range_msg);
   }
 
   rclcpp::Time stamp;
   std::string frame_id;
-  romea::core::ObservationRange romea_obs_range;
+  romea::core::localisation::ObservationRange romea_obs_range;
   romea_localisation_msgs::msg::ObservationRangeStamped ros_obs_range_msg;
 };
 
@@ -63,49 +63,49 @@ TEST_F(TestObsRangeConversion, fromRomeato_ros_msg)
   EXPECT_DOUBLE_EQ(ros_obs_range_msg.observation_range.range_std, std::sqrt(romea_obs_range.R()));
   EXPECT_DOUBLE_EQ(
     ros_obs_range_msg.observation_range.initiator_antenna_position.x,
-    romea_obs_range.initiatorPosition.x());
+    romea_obs_range.initiator_position.x());
   EXPECT_DOUBLE_EQ(
     ros_obs_range_msg.observation_range.initiator_antenna_position.y,
-    romea_obs_range.initiatorPosition.y());
+    romea_obs_range.initiator_position.y());
   EXPECT_DOUBLE_EQ(
     ros_obs_range_msg.observation_range.initiator_antenna_position.z,
-    romea_obs_range.initiatorPosition.z());
+    romea_obs_range.initiator_position.z());
   EXPECT_DOUBLE_EQ(
     ros_obs_range_msg.observation_range.responder_antenna_position.x,
-    romea_obs_range.responderPosition.x());
+    romea_obs_range.responder_position.x());
   EXPECT_DOUBLE_EQ(
     ros_obs_range_msg.observation_range.responder_antenna_position.y,
-    romea_obs_range.responderPosition.y());
+    romea_obs_range.responder_position.y());
   EXPECT_DOUBLE_EQ(
     ros_obs_range_msg.observation_range.responder_antenna_position.z,
-    romea_obs_range.responderPosition.z());
+    romea_obs_range.responder_position.z());
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestObsRangeConversion, fromRosMsgtoObs)
 {
-  romea::core::ObservationRange romea_obs_range_bis;
+  romea::core::localisation::ObservationRange romea_obs_range_bis;
   romea::ros2::extract_obs(ros_obs_range_msg, romea_obs_range_bis);
   EXPECT_DOUBLE_EQ(romea_obs_range_bis.Y(), romea_obs_range.Y());
   EXPECT_DOUBLE_EQ(romea_obs_range_bis.R(), romea_obs_range.R());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.initiatorPosition.x(),
-    romea_obs_range.initiatorPosition.x());
+    romea_obs_range_bis.initiator_position.x(),
+    romea_obs_range.initiator_position.x());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.initiatorPosition.y(),
-    romea_obs_range.initiatorPosition.y());
+    romea_obs_range_bis.initiator_position.y(),
+    romea_obs_range.initiator_position.y());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.initiatorPosition.z(),
-    romea_obs_range.initiatorPosition.z());
+    romea_obs_range_bis.initiator_position.z(),
+    romea_obs_range.initiator_position.z());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.responderPosition.x(),
-    romea_obs_range.responderPosition.x());
+    romea_obs_range_bis.responder_position.x(),
+    romea_obs_range.responder_position.x());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.responderPosition.y(),
-    romea_obs_range.responderPosition.y());
+    romea_obs_range_bis.responder_position.y(),
+    romea_obs_range.responder_position.y());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.responderPosition.z(),
-    romea_obs_range.responderPosition.z());
+    romea_obs_range_bis.responder_position.z(),
+    romea_obs_range.responder_position.z());
 }
 
 //-----------------------------------------------------------------------------

@@ -21,7 +21,7 @@
 // romea
 #include "romea_common_utils/conversions/twist2d_conversions.hpp"
 #include "romea_localisation_msgs/msg/observation_twist2_d_stamped.hpp"
-#include "romea_core_localisation/ObservationTwist.hpp"
+#include "romea_core_localisation/observation_twist.hpp"
 
 namespace romea
 {
@@ -39,18 +39,18 @@ void to_ros_msg(
   romea_localisation_msgs::msg::ObservationTwist2DStamped & msg);
 
 void to_ros_msg(
-  const core::ObservationTwist & observation,
+  const core::localisation::ObservationTwist & observation,
   romea_localisation_msgs::msg::ObservationTwist2D & msg);
 
 void to_ros_msg(
   const rclcpp::Time & stamp,
   const std::string & frame_id,
-  const core::ObservationTwist & observation,
+  const core::localisation::ObservationTwist & observation,
   romea_localisation_msgs::msg::ObservationTwist2DStamped & msg);
 
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationTwist2DStamped & msg,
-  core::ObservationTwist & observation);
+  core::localisation::ObservationTwist & observation);
 
 }  // namespace ros2
 }  // namespace romea

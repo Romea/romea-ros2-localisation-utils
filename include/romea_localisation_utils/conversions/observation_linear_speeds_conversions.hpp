@@ -16,7 +16,7 @@
 #define ROMEA_LOCALISATION_UTILS__CONVERSIONS__OBSERVATION_LINEAR_SPEEDS_CONVERSIONS_HPP_
 
 #include "romea_localisation_msgs/msg/observation_twist2_d_stamped.hpp"
-#include "romea_core_localisation/ObservationLinearSpeeds.hpp"
+#include "romea_core_localisation/observation_linear_speeds.hpp"
 
 namespace romea
 {
@@ -25,7 +25,7 @@ namespace ros2
 
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationTwist2DStamped & msg,
-  core::ObservationLinearSpeeds & observation);
+  core::localisation::ObservationLinearSpeeds & observation);
 
 }  // namespace ros2
 }  // namespace romea

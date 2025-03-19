@@ -22,11 +22,11 @@ namespace ros2
 //-----------------------------------------------------------------------------
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationTwist2DStamped & msg,
-  core::ObservationLinearSpeeds & observation)
+  core::localisation::ObservationLinearSpeeds & observation)
 {
-  observation.Y(core::ObservationLinearSpeeds::LINEAR_SPEED_X_BODY) =
+  observation.Y(core::localisation::ObservationLinearSpeeds::LINEAR_SPEED_X_BODY) =
     msg.observation_twist.twist.linear_speeds.x;
-  observation.Y(core::ObservationLinearSpeeds::LINEAR_SPEED_Y_BODY) =
+  observation.Y(core::localisation::ObservationLinearSpeeds::LINEAR_SPEED_Y_BODY) =
     msg.observation_twist.twist.linear_speeds.y;
   observation.R(0, 0) = msg.observation_twist.twist.covariance[0],
   observation.R(0, 1) = msg.observation_twist.twist.covariance[1];

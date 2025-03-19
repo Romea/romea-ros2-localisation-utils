@@ -22,7 +22,6 @@
 #include "test_utils.hpp"
 #include "romea_localisation_utils/conversions/observation_course_conversions.hpp"
 
-
 //-----------------------------------------------------------------------------
 class TestObsCourseConversion : public ::testing::Test
 {
@@ -44,7 +43,7 @@ public:
 
   rclcpp::Time stamp;
   std::string frame_id;
-  romea::core::ObservationCourse romea_obs_course;
+  romea::core::localisation::ObservationCourse romea_obs_course;
   romea_localisation_msgs::msg::ObservationCourseStamped ros_obs_course_msg;
 };
 
@@ -60,7 +59,7 @@ TEST_F(TestObsCourseConversion, fromRomeato_ros_msg)
 //-----------------------------------------------------------------------------
 TEST_F(TestObsCourseConversion, fromRosMsgtoObs)
 {
-  romea::core::ObservationCourse romea_obs_course_bis;
+  romea::core::localisation::ObservationCourse romea_obs_course_bis;
   romea::ros2::extract_obs(ros_obs_course_msg, romea_obs_course_bis);
 
   EXPECT_DOUBLE_EQ(romea_obs_course_bis.Y(), romea_obs_course.Y());

@@ -25,24 +25,24 @@ namespace ros2
 
 //-----------------------------------------------------------------------------
 void to_ros_msg(
-  const core::ObservationRange & observation,
+  const core::localisation::ObservationRange & observation,
   romea_localisation_msgs::msg::ObservationRange & msg)
 {
   msg.range = observation.Y();
   msg.range_std = std::sqrt(observation.R());
-  msg.initiator_antenna_position.x = observation.initiatorPosition.x();
-  msg.initiator_antenna_position.y = observation.initiatorPosition.y();
-  msg.initiator_antenna_position.z = observation.initiatorPosition.z();
-  msg.responder_antenna_position.x = observation.responderPosition.x();
-  msg.responder_antenna_position.y = observation.responderPosition.y();
-  msg.responder_antenna_position.z = observation.responderPosition.z();
+  msg.initiator_antenna_position.x = observation.initiator_position.x();
+  msg.initiator_antenna_position.y = observation.initiator_position.y();
+  msg.initiator_antenna_position.z = observation.initiator_position.z();
+  msg.responder_antenna_position.x = observation.responder_position.x();
+  msg.responder_antenna_position.y = observation.responder_position.y();
+  msg.responder_antenna_position.z = observation.responder_position.z();
 }
 
 //-----------------------------------------------------------------------------
 void to_ros_msg(
   const rclcpp::Time & stamp,
   const std::string & frame_id,
-  const core::ObservationRange & observation,
+  const core::localisation::ObservationRange & observation,
   romea_localisation_msgs::msg::ObservationRangeStamped & msg)
 {
   msg.header.frame_id = frame_id;
@@ -53,16 +53,16 @@ void to_ros_msg(
 //-----------------------------------------------------------------------------
 void extract_obs(
   const romea_localisation_msgs::msg::ObservationRangeStamped & msg,
-  core::ObservationRange & observation)
+  core::localisation::ObservationRange & observation)
 {
   observation.Y() = msg.observation_range.range;
   observation.R() = msg.observation_range.range_std * msg.observation_range.range_std;
-  observation.initiatorPosition.x() = msg.observation_range.initiator_antenna_position.x;
-  observation.initiatorPosition.y() = msg.observation_range.initiator_antenna_position.y;
-  observation.initiatorPosition.z() = msg.observation_range.initiator_antenna_position.z;
-  observation.responderPosition.x() = msg.observation_range.responder_antenna_position.x;
-  observation.responderPosition.y() = msg.observation_range.responder_antenna_position.y;
-  observation.responderPosition.z() = msg.observation_range.responder_antenna_position.z;
+  observation.initiator_position.x() = msg.observation_range.initiator_antenna_position.x;
+  observation.initiator_position.y() = msg.observation_range.initiator_antenna_position.y;
+  observation.initiator_position.z() = msg.observation_range.initiator_antenna_position.z;
+  observation.responder_position.x() = msg.observation_range.responder_antenna_position.x;
+  observation.responder_position.y() = msg.observation_range.responder_antenna_position.y;
+  observation.responder_position.z() = msg.observation_range.responder_antenna_position.z;
 }
 
 }  // namespace ros2
