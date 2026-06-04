@@ -25,8 +25,7 @@ namespace ros2
 
 //-----------------------------------------------------------------------------
 void to_ros_msg(
-  const core::Position2D & position,
-  romea_localisation_msgs::msg::ObservationPosition2D & msg)
+  const core::Position2D & position, romea_localisation_msgs::msg::ObservationPosition2D & msg)
 {
   ros2::to_ros_msg(position, msg.position);
   msg.lever_arm.x = 0;

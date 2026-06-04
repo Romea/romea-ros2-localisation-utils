@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <string>
 
@@ -48,7 +47,6 @@ void to_ros_msg(
   msg.header.stamp = stamp;
   to_ros_msg(observation, msg.observation_attitude);
 }
-
 
 //-----------------------------------------------------------------------------
 void extract_obs(

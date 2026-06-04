@@ -22,20 +22,15 @@
 #include "../test/test_utils.hpp"
 #include "romea_localisation_utils/conversions/observation_twist_conversions.hpp"
 
-
 //-----------------------------------------------------------------------------
 class TestObsTwistConversion : public ::testing::Test
 {
 public:
-  TestObsTwistConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_obs_twist(),
-    romea_obs_twist_msg()
+  TestObsTwistConversion() : stamp(1000), frame_id("foo"), romea_obs_twist(), romea_obs_twist_msg()
   {
   }
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_obs_twist.Y(romea::core::localisation::ObservationTwist::LINEAR_SPEED_X_BODY) = 1;
     romea_obs_twist.Y(romea::core::localisation::ObservationTwist::LINEAR_SPEED_Y_BODY) = 2;
@@ -68,14 +63,11 @@ TEST_F(TestObsTwistConversion, fromRomeato_ros_msg)
     romea_obs_twist_msg.observation_twist.twist.angular_speed,
     romea_obs_twist.Y(romea::core::localisation::ObservationTwist::ANGULAR_SPEED_Z_BODY));
   EXPECT_DOUBLE_EQ(
-    romea_obs_twist_msg.observation_twist.lever_arm.x,
-    romea_obs_twist.lever_arm.x());
+    romea_obs_twist_msg.observation_twist.lever_arm.x, romea_obs_twist.lever_arm.x());
   EXPECT_DOUBLE_EQ(
-    romea_obs_twist_msg.observation_twist.lever_arm.y,
-    romea_obs_twist.lever_arm.y());
+    romea_obs_twist_msg.observation_twist.lever_arm.y, romea_obs_twist.lever_arm.y());
   EXPECT_DOUBLE_EQ(
-    romea_obs_twist_msg.observation_twist.lever_arm.z,
-    romea_obs_twist.lever_arm.z());
+    romea_obs_twist_msg.observation_twist.lever_arm.z, romea_obs_twist.lever_arm.z());
   isSame(romea_obs_twist_msg.observation_twist.twist.covariance, romea_obs_twist.R());
 }
 
@@ -99,20 +91,13 @@ TEST_F(TestObsTwistConversion, fromRosMsgtoObs)
   isSame(romea_obs_twist_bis.R(), romea_obs_twist.R());
 }
 
-
 //-----------------------------------------------------------------------------
 class TestPoseConversion : public ::testing::Test
 {
 public:
-  TestPoseConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_twist(),
-    romea_obs_twist_msg()
-  {
-  }
+  TestPoseConversion() : stamp(1000), frame_id("foo"), romea_twist(), romea_obs_twist_msg() {}
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_twist.linearSpeeds.x() = 1;
     romea_twist.linearSpeeds.y() = 2;
@@ -133,14 +118,11 @@ TEST_F(TestPoseConversion, fromRomeato_ros_msg)
   EXPECT_EQ(romea::ros2::extract_time(romea_obs_twist_msg).nanoseconds(), stamp.nanoseconds());
   EXPECT_STREQ(romea_obs_twist_msg.header.frame_id.c_str(), frame_id.c_str());
   EXPECT_DOUBLE_EQ(
-    romea_obs_twist_msg.observation_twist.twist.linear_speeds.x,
-    romea_twist.linearSpeeds.x());
+    romea_obs_twist_msg.observation_twist.twist.linear_speeds.x, romea_twist.linearSpeeds.x());
   EXPECT_DOUBLE_EQ(
-    romea_obs_twist_msg.observation_twist.twist.linear_speeds.y,
-    romea_twist.linearSpeeds.y());
+    romea_obs_twist_msg.observation_twist.twist.linear_speeds.y, romea_twist.linearSpeeds.y());
   EXPECT_DOUBLE_EQ(
-    romea_obs_twist_msg.observation_twist.twist.angular_speed,
-    romea_twist.angularSpeed);
+    romea_obs_twist_msg.observation_twist.twist.angular_speed, romea_twist.angularSpeed);
   EXPECT_DOUBLE_EQ(romea_obs_twist_msg.observation_twist.lever_arm.x, 0);
   EXPECT_DOUBLE_EQ(romea_obs_twist_msg.observation_twist.lever_arm.y, 0);
   EXPECT_DOUBLE_EQ(romea_obs_twist_msg.observation_twist.lever_arm.z, 0);

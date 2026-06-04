@@ -19,22 +19,19 @@
 #include "gtest/gtest.h"
 
 // romea
-#include "test_utils.hpp"
 #include "romea_localisation_utils/conversions/observation_attitude_conversions.hpp"
+#include "test_utils.hpp"
 
 //-----------------------------------------------------------------------------
 class TestObsAttitudeConversion : public ::testing::Test
 {
 public:
   TestObsAttitudeConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_obs_attitude(),
-    romea_obs_attitude_msg()
+  : stamp(1000), frame_id("foo"), romea_obs_attitude(), romea_obs_attitude_msg()
   {
   }
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_obs_attitude.Y(romea::core::localisation::ObservationAttitude::ROLL) = 1;
     romea_obs_attitude.Y(romea::core::localisation::ObservationAttitude::PITCH) = 2;

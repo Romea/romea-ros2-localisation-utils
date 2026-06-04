@@ -19,8 +19,8 @@
 #include <string>
 
 // romea
-#include "romea_core_localisation/observation_attitude.hpp"
 #include "romea_common_utils/conversions/time_conversions.hpp"
+#include "romea_core_localisation/observation_attitude.hpp"
 #include "romea_localisation_msgs/msg/observation_attitude_stamped.hpp"
 
 namespace romea

@@ -29,20 +29,22 @@
 using namespace romea::ros2::localisation;  // NOLINT
 
 //-----------------------------------------------------------------------------
-class TestLocalisationFilterParams : public ::testing::Test {
- protected:
+class TestLocalisationFilterParams : public ::testing::Test
+{
+protected:
   static void SetUpTestCase() { rclcpp::init(0, nullptr); }
 
   static void TearDownTestCase() { rclcpp::shutdown(); }
 
-  void SetUp() override {
+  void SetUp() override
+  {
     rclcpp::NodeOptions no;
     no.arguments(
-        {"--ros-args", "--params-file",
-         std::string(TEST_DIR) + "/test_localisation_parameters.yaml"});
+      {"--ros-args",
+       "--params-file",
+       std::string(TEST_DIR) + "/test_localisation_parameters.yaml"});
 
-    std::cout << "  loc file"
-              << std::string(TEST_DIR) + "/test_localisation_parameters.yaml"
+    std::cout << "  loc file" << std::string(TEST_DIR) + "/test_localisation_parameters.yaml"
               << std::endl;
     node = std::make_shared<rclcpp::Node>("test_localisation_parameters", no);
   }
@@ -51,45 +53,44 @@ class TestLocalisationFilterParams : public ::testing::Test {
 };
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams,
-       checkGetPredictorMaximalDeadReckoningTravelledDistance) {
+TEST_F(TestLocalisationFilterParams, checkGetPredictorMaximalDeadReckoningTravelledDistance)
+{
   declare_predictor_maximal_dead_reckoning_travelled_distance(
-      node, std::numeric_limits<double>::max());
-  EXPECT_DOUBLE_EQ(
-      get_predictor_maximal_dead_reckoning_travelled_distance(node), 10.0);
+    node, std::numeric_limits<double>::max());
+  EXPECT_DOUBLE_EQ(get_predictor_maximal_dead_reckoning_travelled_distance(node), 10.0);
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams,
-       checkGetPredictorMaximalDeadReckoningElapsedTime) {
-  declare_predictor_maximal_dead_reckoning_elapsed_time(
-      node, std::numeric_limits<double>::max());
-  EXPECT_DOUBLE_EQ(get_predictor_maximal_dead_reckoning_elapsed_time(node),
-                   3.0);
+TEST_F(TestLocalisationFilterParams, checkGetPredictorMaximalDeadReckoningElapsedTime)
+{
+  declare_predictor_maximal_dead_reckoning_elapsed_time(node, std::numeric_limits<double>::max());
+  EXPECT_DOUBLE_EQ(get_predictor_maximal_dead_reckoning_elapsed_time(node), 3.0);
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams,
-       checkGetPredictorMaximalCircularErrorProbable) {
-  declare_predictor_maximal_circular_error_probable(
-      node, std::numeric_limits<double>::max());
+TEST_F(TestLocalisationFilterParams, checkGetPredictorMaximalCircularErrorProbable)
+{
+  declare_predictor_maximal_circular_error_probable(node, std::numeric_limits<double>::max());
   EXPECT_DOUBLE_EQ(get_predictor_maximal_circular_error_probable(node), 0.2);
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams, checkGetFilternumber_of_particles) {
+TEST_F(TestLocalisationFilterParams, checkGetFilternumber_of_particles)
+{
   declare_filter_number_of_particles(node);
   EXPECT_EQ(get_filter_number_of_particles(node), 200u);
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams, checkGetFilterStatePoolSize) {
+TEST_F(TestLocalisationFilterParams, checkGetFilterStatePoolSize)
+{
   declare_filter_state_pool_size(node);
   EXPECT_EQ(get_filter_state_pool_size(node), 1000u);
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams, checkGetUpdatertrigger_mode) {
+TEST_F(TestLocalisationFilterParams, checkGetUpdatertrigger_mode)
+{
   declare_updater_trigger_mode(node, "position_updater", "once");
   EXPECT_EQ(get_updater_trigger_mode(node, "position_updater"), "always");
 }
@@ -109,35 +110,38 @@ TEST_F(TestLocalisationFilterParams, checkGetUpdatertrigger_mode) {
 // }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams, checkGetUpdaterminimal_rate) {
+TEST_F(TestLocalisationFilterParams, checkGetUpdaterminimal_rate)
+{
   declare_updater_minimal_rate(node, "angular_speed_updater", 20u);
   EXPECT_EQ(get_updater_minimal_rate(node, "angular_speed_updater"), 10u);
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams, checkGetUpdaterEmptyminimal_rate) {
+TEST_F(TestLocalisationFilterParams, checkGetUpdaterEmptyminimal_rate)
+{
   declare_updater_minimal_rate(node, "bar", 10u);
   EXPECT_EQ(get_updater_minimal_rate(node, "bar"), 10u);
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams, checkGetUpdaterMahalanobisDistance) {
+TEST_F(TestLocalisationFilterParams, checkGetUpdaterMahalanobisDistance)
+{
   declare_updater_mahalanobis_distance_rejection_threshold(
-      node, "position_updater", std::numeric_limits<double>::max());
-  EXPECT_DOUBLE_EQ(get_updater_mahalanobis_distance_rejection_threshold(
-                       node, "position_updater"),
-                   3);
-}
-
-//-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams, checkGetUpdaterEmptyMahalanobisDistance) {
-  declare_updater_mahalanobis_distance_rejection_threshold(node, "bar", 3);
+    node, "position_updater", std::numeric_limits<double>::max());
   EXPECT_DOUBLE_EQ(
-      get_updater_mahalanobis_distance_rejection_threshold(node, "bar"), 3);
+    get_updater_mahalanobis_distance_rejection_threshold(node, "position_updater"), 3);
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char** argv) {
+TEST_F(TestLocalisationFilterParams, checkGetUpdaterEmptyMahalanobisDistance)
+{
+  declare_updater_mahalanobis_distance_rejection_threshold(node, "bar", 3);
+  EXPECT_DOUBLE_EQ(get_updater_mahalanobis_distance_rejection_threshold(node, "bar"), 3);
+}
+
+//-----------------------------------------------------------------------------
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

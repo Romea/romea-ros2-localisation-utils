@@ -20,8 +20,8 @@
 
 // romea
 #include "romea_common_utils/conversions/twist2d_conversions.hpp"
-#include "romea_localisation_msgs/msg/observation_twist2_d_stamped.hpp"
 #include "romea_core_localisation/observation_twist.hpp"
+#include "romea_localisation_msgs/msg/observation_twist2_d_stamped.hpp"
 
 namespace romea
 {
@@ -29,8 +29,7 @@ namespace ros2
 {
 
 void to_ros_msg(
-  const core::Twist2D & twist,
-  romea_localisation_msgs::msg::ObservationTwist2D & msg);
+  const core::Twist2D & twist, romea_localisation_msgs::msg::ObservationTwist2D & msg);
 
 void to_ros_msg(
   const rclcpp::Time & stamp,

@@ -15,14 +15,12 @@
 #ifndef ROMEA_LOCALISATION_UTILS__FILTER__UPDATER_INTERFACE_BASE_HPP_
 #define ROMEA_LOCALISATION_UTILS__FILTER__UPDATER_INTERFACE_BASE_HPP_
 
-
 // ros
 #include <rclcpp/rclcpp.hpp>
 
 // romea
-#include <romea_core_common/diagnostic/CheckupRate.hpp>
 #include <romea_common_utils/conversions/time_conversions.hpp>
-
+#include <romea_core_common/diagnostic/CheckupRate.hpp>
 
 namespace romea
 {

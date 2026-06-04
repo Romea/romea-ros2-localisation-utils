@@ -19,23 +19,16 @@
 #include "gtest/gtest.h"
 
 // romea
-#include "test_utils.hpp"
 #include "romea_localisation_utils/conversions/observation_range_conversions.hpp"
-
+#include "test_utils.hpp"
 
 //-----------------------------------------------------------------------------
 class TestObsRangeConversion : public ::testing::Test
 {
 public:
-  TestObsRangeConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_obs_range(),
-    ros_obs_range_msg()
-  {
-  }
+  TestObsRangeConversion() : stamp(1000), frame_id("foo"), romea_obs_range(), ros_obs_range_msg() {}
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_obs_range.Y() = 1;
     romea_obs_range.R() = 4;
@@ -89,23 +82,17 @@ TEST_F(TestObsRangeConversion, fromRosMsgtoObs)
   EXPECT_DOUBLE_EQ(romea_obs_range_bis.Y(), romea_obs_range.Y());
   EXPECT_DOUBLE_EQ(romea_obs_range_bis.R(), romea_obs_range.R());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.initiator_position.x(),
-    romea_obs_range.initiator_position.x());
+    romea_obs_range_bis.initiator_position.x(), romea_obs_range.initiator_position.x());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.initiator_position.y(),
-    romea_obs_range.initiator_position.y());
+    romea_obs_range_bis.initiator_position.y(), romea_obs_range.initiator_position.y());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.initiator_position.z(),
-    romea_obs_range.initiator_position.z());
+    romea_obs_range_bis.initiator_position.z(), romea_obs_range.initiator_position.z());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.responder_position.x(),
-    romea_obs_range.responder_position.x());
+    romea_obs_range_bis.responder_position.x(), romea_obs_range.responder_position.x());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.responder_position.y(),
-    romea_obs_range.responder_position.y());
+    romea_obs_range_bis.responder_position.y(), romea_obs_range.responder_position.y());
   EXPECT_DOUBLE_EQ(
-    romea_obs_range_bis.responder_position.z(),
-    romea_obs_range.responder_position.z());
+    romea_obs_range_bis.responder_position.z(), romea_obs_range.responder_position.z());
 }
 
 //-----------------------------------------------------------------------------

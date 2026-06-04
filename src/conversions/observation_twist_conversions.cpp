@@ -24,9 +24,7 @@ namespace ros2
 {
 
 //-----------------------------------------------------------------------------
-void to_ros_msg(
-  const core::Twist2D & twist,
-  romea_localisation_msgs::msg::ObservationTwist2D & msg)
+void to_ros_msg(const core::Twist2D & twist, romea_localisation_msgs::msg::ObservationTwist2D & msg)
 {
   ros2::to_ros_msg(twist, msg.twist);
   msg.lever_arm.x = 0;

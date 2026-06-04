@@ -26,15 +26,9 @@
 class TestObsPoseConversion : public ::testing::Test
 {
 public:
-  TestObsPoseConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_obs_pose(),
-    romea_obs_pose_msg()
-  {
-  }
+  TestObsPoseConversion() : stamp(1000), frame_id("foo"), romea_obs_pose(), romea_obs_pose_msg() {}
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_obs_pose.Y(romea::core::localisation::ObservationPose::POSITION_X) = 1;
     romea_obs_pose.Y(romea::core::localisation::ObservationPose::POSITION_Y) = 2;
@@ -66,15 +60,9 @@ TEST_F(TestObsPoseConversion, fromRomeato_ros_msg)
   EXPECT_DOUBLE_EQ(
     romea_obs_pose_msg.observation_pose.pose.yaw,
     romea_obs_pose.Y(romea::core::localisation::ObservationPose::ORIENTATION_Z));
-  EXPECT_DOUBLE_EQ(
-    romea_obs_pose_msg.observation_pose.lever_arm.x,
-    romea_obs_pose.lever_arm.x());
-  EXPECT_DOUBLE_EQ(
-    romea_obs_pose_msg.observation_pose.lever_arm.y,
-    romea_obs_pose.lever_arm.y());
-  EXPECT_DOUBLE_EQ(
-    romea_obs_pose_msg.observation_pose.lever_arm.z,
-    romea_obs_pose.lever_arm.z());
+  EXPECT_DOUBLE_EQ(romea_obs_pose_msg.observation_pose.lever_arm.x, romea_obs_pose.lever_arm.x());
+  EXPECT_DOUBLE_EQ(romea_obs_pose_msg.observation_pose.lever_arm.y, romea_obs_pose.lever_arm.y());
+  EXPECT_DOUBLE_EQ(romea_obs_pose_msg.observation_pose.lever_arm.z, romea_obs_pose.lever_arm.z());
 
   isSame(romea_obs_pose_msg.observation_pose.pose.covariance, romea_obs_pose.R());
 }
@@ -93,33 +81,20 @@ TEST_F(TestObsPoseConversion, fromRosMsgtoObs)
   EXPECT_DOUBLE_EQ(
     romea_obs_pose_bis.Y(romea::core::localisation::ObservationPose::ORIENTATION_Z),
     romea_obs_pose.Y(romea::core::localisation::ObservationPose::ORIENTATION_Z));
-  EXPECT_DOUBLE_EQ(
-    romea_obs_pose_bis.lever_arm.x(),
-    romea_obs_pose.lever_arm.x());
-  EXPECT_DOUBLE_EQ(
-    romea_obs_pose_bis.lever_arm.y(),
-    romea_obs_pose.lever_arm.y());
-  EXPECT_DOUBLE_EQ(
-    romea_obs_pose_bis.lever_arm.z(),
-    romea_obs_pose.lever_arm.z());
+  EXPECT_DOUBLE_EQ(romea_obs_pose_bis.lever_arm.x(), romea_obs_pose.lever_arm.x());
+  EXPECT_DOUBLE_EQ(romea_obs_pose_bis.lever_arm.y(), romea_obs_pose.lever_arm.y());
+  EXPECT_DOUBLE_EQ(romea_obs_pose_bis.lever_arm.z(), romea_obs_pose.lever_arm.z());
 
   isSame(romea_obs_pose_bis.R(), romea_obs_pose.R());
 }
-
 
 //-----------------------------------------------------------------------------
 class TestPoseConversion : public ::testing::Test
 {
 public:
-  TestPoseConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_pose(),
-    romea_obs_pose_msg()
-  {
-  }
+  TestPoseConversion() : stamp(1000), frame_id("foo"), romea_pose(), romea_obs_pose_msg() {}
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_pose.position.x() = 1;
     romea_pose.position.y() = 2;

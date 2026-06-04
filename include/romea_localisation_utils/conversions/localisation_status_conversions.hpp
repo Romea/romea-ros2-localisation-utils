@@ -18,7 +18,6 @@
 #include "romea_core_localisation/fsm_state.hpp"
 #include "romea_localisation_msgs/msg/localisation_status.hpp"
 
-
 namespace romea
 {
 namespace ros2

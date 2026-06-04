@@ -19,20 +19,16 @@
 #include "gtest/gtest.h"
 
 // romea
-#include "test_utils.hpp"
 #include "romea_localisation_utils/conversions/observation_linear_speed_conversions.hpp"
+#include "test_utils.hpp"
 
 //-----------------------------------------------------------------------------
 class TestObsLinearSpeedConversion : public ::testing::Test
 {
 public:
-  TestObsLinearSpeedConversion()
-  : romea_obs_linear_speed(),
-    ros_obs_linear_speed_msg()
-  {
-  }
+  TestObsLinearSpeedConversion() : romea_obs_linear_speed(), ros_obs_linear_speed_msg() {}
 
-  void SetUp()override
+  void SetUp() override
   {
     ros_obs_linear_speed_msg.observation_twist.twist.linear_speeds.x = 1;
     ros_obs_linear_speed_msg.observation_twist.twist.linear_speeds.y = 2;
@@ -47,18 +43,15 @@ public:
   romea_localisation_msgs::msg::ObservationTwist2DStamped ros_obs_linear_speed_msg;
 };
 
-
 //-----------------------------------------------------------------------------
 TEST_F(TestObsLinearSpeedConversion, fromRosMsgtoObs)
 {
   romea::core::localisation::ObservationLinearSpeed romea_obs_linear_speed;
   romea::ros2::extract_obs(ros_obs_linear_speed_msg, romea_obs_linear_speed);
   EXPECT_DOUBLE_EQ(
-    romea_obs_linear_speed.Y(),
-    ros_obs_linear_speed_msg.observation_twist.twist.linear_speeds.x);
+    romea_obs_linear_speed.Y(), ros_obs_linear_speed_msg.observation_twist.twist.linear_speeds.x);
   EXPECT_DOUBLE_EQ(
-    romea_obs_linear_speed.R(),
-    ros_obs_linear_speed_msg.observation_twist.twist.covariance[0]);
+    romea_obs_linear_speed.R(), ros_obs_linear_speed_msg.observation_twist.twist.covariance[0]);
 }
 
 //-----------------------------------------------------------------------------

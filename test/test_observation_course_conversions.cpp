@@ -19,22 +19,18 @@
 #include "gtest/gtest.h"
 
 // romea
-#include "test_utils.hpp"
 #include "romea_localisation_utils/conversions/observation_course_conversions.hpp"
+#include "test_utils.hpp"
 
 //-----------------------------------------------------------------------------
 class TestObsCourseConversion : public ::testing::Test
 {
 public:
-  TestObsCourseConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_obs_course(),
-    ros_obs_course_msg()
+  TestObsCourseConversion() : stamp(1000), frame_id("foo"), romea_obs_course(), ros_obs_course_msg()
   {
   }
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_obs_course.Y() = 1;
     romea_obs_course.R() = 4;

@@ -21,20 +21,16 @@
 #include "../test/test_utils.hpp"
 #include "romea_localisation_utils/conversions/observation_position_conversions.hpp"
 
-
 //-----------------------------------------------------------------------------
 class TestObsPositionConversion : public ::testing::Test
 {
 public:
   TestObsPositionConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_obs_position(),
-    romea_obs_position_msg()
+  : stamp(1000), frame_id("foo"), romea_obs_position(), romea_obs_position_msg()
   {
   }
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_obs_position.Y(romea::core::localisation::ObservationPosition::POSITION_X) = 1;
     romea_obs_position.Y(romea::core::localisation::ObservationPosition::POSITION_Y) = 2;
@@ -80,20 +76,16 @@ TEST_F(TestObsPositionConversion, fromRosMsgtoObs)
   isSame(romea_obs_position_bis.R(), romea_obs_position.R());
 }
 
-
 //-----------------------------------------------------------------------------
 class TestPositionConversion : public ::testing::Test
 {
 public:
   TestPositionConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_position(),
-    romea_obs_position_msg()
+  : stamp(1000), frame_id("foo"), romea_position(), romea_obs_position_msg()
   {
   }
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_position.position.x() = 1;
     romea_position.position.y() = 2;
@@ -113,14 +105,11 @@ TEST_F(TestPositionConversion, fromRomeato_ros_msg)
   EXPECT_EQ(romea::ros2::extract_time(romea_obs_position_msg).nanoseconds(), stamp.nanoseconds());
   EXPECT_STREQ(romea_obs_position_msg.header.frame_id.c_str(), frame_id.c_str());
   EXPECT_DOUBLE_EQ(
-    romea_obs_position_msg.observation_position.position.x,
-    romea_position.position.x());
+    romea_obs_position_msg.observation_position.position.x, romea_position.position.x());
   EXPECT_DOUBLE_EQ(
-    romea_obs_position_msg.observation_position.position.y,
-    romea_position.position.y());
+    romea_obs_position_msg.observation_position.position.y, romea_position.position.y());
   isSame(
-    romea_obs_position_msg.observation_position.position.covariance,
-    romea_position.covariance);
+    romea_obs_position_msg.observation_position.position.covariance, romea_position.covariance);
 }
 
 //-----------------------------------------------------------------------------

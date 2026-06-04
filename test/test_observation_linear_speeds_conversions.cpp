@@ -23,13 +23,9 @@
 class TestObsLinearSpeedsConversion : public ::testing::Test
 {
 public:
-  TestObsLinearSpeedsConversion()
-  : romea_obs_linear_speeds(),
-    ros_obs_linear_speeds_msg()
-  {
-  }
+  TestObsLinearSpeedsConversion() : romea_obs_linear_speeds(), ros_obs_linear_speeds_msg() {}
 
-  void SetUp()override
+  void SetUp() override
   {
     ros_obs_linear_speeds_msg.observation_twist.twist.linear_speeds.x = 1;
     ros_obs_linear_speeds_msg.observation_twist.twist.linear_speeds.y = 2;
@@ -43,7 +39,6 @@ public:
   romea::core::localisation::ObservationLinearSpeeds romea_obs_linear_speeds;
   romea_localisation_msgs::msg::ObservationTwist2DStamped ros_obs_linear_speeds_msg;
 };
-
 
 //-----------------------------------------------------------------------------
 TEST_F(TestObsLinearSpeedsConversion, fromRosMsgtoObs)

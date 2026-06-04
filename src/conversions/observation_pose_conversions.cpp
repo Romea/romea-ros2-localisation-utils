@@ -24,9 +24,7 @@ namespace ros2
 {
 
 //-----------------------------------------------------------------------------
-void to_ros_msg(
-  const core::Pose2D & pose,
-  romea_localisation_msgs::msg::ObservationPose2D & msg)
+void to_ros_msg(const core::Pose2D & pose, romea_localisation_msgs::msg::ObservationPose2D & msg)
 {
   ros2::to_ros_msg(pose, msg.pose);
   msg.lever_arm.x = 0;
@@ -84,8 +82,7 @@ void extract_obs(
     msg.observation_pose.pose.position.x;
   observation.Y(core::localisation::ObservationPose::POSITION_Y) =
     msg.observation_pose.pose.position.y;
-  observation.Y(core::localisation::ObservationPose::ORIENTATION_Z) =
-    msg.observation_pose.pose.yaw;
+  observation.Y(core::localisation::ObservationPose::ORIENTATION_Z) = msg.observation_pose.pose.yaw;
 
   observation.R() = Eigen::Matrix3d(msg.observation_pose.pose.covariance.data());
   observation.lever_arm.x() = msg.observation_pose.lever_arm.x;

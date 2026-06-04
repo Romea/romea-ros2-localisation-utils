@@ -26,14 +26,11 @@ class TestObsAngularSpeedConversion : public ::testing::Test
 {
 public:
   TestObsAngularSpeedConversion()
-  : stamp(1000),
-    frame_id("foo"),
-    romea_obs_angular_speed(),
-    ros_obs_angular_speed_msg()
+  : stamp(1000), frame_id("foo"), romea_obs_angular_speed(), ros_obs_angular_speed_msg()
   {
   }
 
-  void SetUp()override
+  void SetUp() override
   {
     romea_obs_angular_speed.Y() = 1;
     romea_obs_angular_speed.R() = 4;
@@ -53,8 +50,7 @@ TEST_F(TestObsAngularSpeedConversion, fromRomeato_ros_msg)
     romea::ros2::extract_time(ros_obs_angular_speed_msg).nanoseconds(), stamp.nanoseconds());
   EXPECT_STREQ(ros_obs_angular_speed_msg.header.frame_id.c_str(), frame_id.c_str());
   EXPECT_DOUBLE_EQ(
-    ros_obs_angular_speed_msg.observation_angular_speed.velocity,
-    romea_obs_angular_speed.Y());
+    ros_obs_angular_speed_msg.observation_angular_speed.velocity, romea_obs_angular_speed.Y());
   EXPECT_DOUBLE_EQ(
     ros_obs_angular_speed_msg.observation_angular_speed.std,
     std::sqrt(romea_obs_angular_speed.R()));

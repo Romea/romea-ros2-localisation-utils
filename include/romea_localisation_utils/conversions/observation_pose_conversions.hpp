@@ -20,18 +20,15 @@
 
 // romea
 #include "romea_common_utils/conversions/pose2d_conversions.hpp"
-#include "romea_localisation_msgs/msg/observation_pose2_d_stamped.hpp"
 #include "romea_core_localisation/observation_pose.hpp"
-
+#include "romea_localisation_msgs/msg/observation_pose2_d_stamped.hpp"
 
 namespace romea
 {
 namespace ros2
 {
 
-void to_ros_msg(
-  const core::Pose2D & pose,
-  romea_localisation_msgs::msg::ObservationPose2D & msg);
+void to_ros_msg(const core::Pose2D & pose, romea_localisation_msgs::msg::ObservationPose2D & msg);
 
 void to_ros_msg(
   const rclcpp::Time & stamp,

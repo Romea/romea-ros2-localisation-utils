@@ -29,9 +29,9 @@ void extract_obs(
   observation.Y(core::localisation::ObservationLinearSpeeds::LINEAR_SPEED_Y_BODY) =
     msg.observation_twist.twist.linear_speeds.y;
   observation.R(0, 0) = msg.observation_twist.twist.covariance[0],
-  observation.R(0, 1) = msg.observation_twist.twist.covariance[1];
+                   observation.R(0, 1) = msg.observation_twist.twist.covariance[1];
   observation.R(1, 0) = msg.observation_twist.twist.covariance[3],
-  observation.R(1, 1) = msg.observation_twist.twist.covariance[4];
+                   observation.R(1, 1) = msg.observation_twist.twist.covariance[4];
 }
 
 }  // namespace ros2
