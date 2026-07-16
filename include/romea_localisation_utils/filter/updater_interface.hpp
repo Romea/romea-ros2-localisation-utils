@@ -23,6 +23,7 @@
 
 // romea
 #include "romea_common_utils/qos.hpp"
+#include "romea_core_filtering/filter/filter_base.hpp"
 #include "romea_localisation_utils/conversions/observation_conversions.hpp"
 #include "romea_localisation_utils/filter/parameters.hpp"
 #include "romea_localisation_utils/filter/updater_interface_base.hpp"
@@ -56,6 +57,7 @@ public:
   core::DiagnosticReport get_report() override;
 
 private:
+  std::shared_ptr<rclcpp::Node> node_;
   std::shared_ptr<Filter> filter_;
   std::unique_ptr<Updater> updater_;
   std::shared_ptr<rclcpp::Subscription<Msg>> sub_;
@@ -65,7 +67,7 @@ private:
 template<typename Filter_, typename Updater_, typename Msg>
 UpdaterInterface<Filter_, Updater_, Msg>::UpdaterInterface(
   std::shared_ptr<rclcpp::Node> node, const std::string & topic_name)
-: UpdaterInterfaceBase(), filter_(nullptr), updater_(nullptr), sub_()
+: UpdaterInterfaceBase(), node_(node), filter_(nullptr), updater_(nullptr), sub_()
 {
   auto callback = std::bind(&UpdaterInterface::process_message, this, std::placeholders::_1);
 
@@ -109,7 +111,14 @@ void UpdaterInterface<Filter_, Updater_, Msg>::process_message(typename Msg::Con
     std::placeholders::_2,
     std::placeholders::_3);
 
-  filter_->process(duration, std::move(update_function));
+  const auto process_status = filter_->process(duration, std::move(update_function));
+  if (process_status == core::FilterProcessStatus::OUT_OF_HISTORY) {
+    RCLCPP_WARN_THROTTLE(
+      node_->get_logger(),
+      *node_->get_clock(),
+      5000,
+      "Discard observation because it is too old for the retained filter history");
+  }
 }
 
 //-----------------------------------------------------------------------------
