@@ -35,20 +35,34 @@ namespace localisation
 //-----------------------------------------------------------------------------
 template<class Updater>
 std::unique_ptr<Updater> make_kalman_exteroceptive_updater(
-  std::shared_ptr<rclcpp::Node> & node, const std::string & updater_name)
+  std::shared_ptr<rclcpp::Node> & node,
+  const std::string & updater_name,
+  const std::string & log_filename)
 {
   return std::make_unique<Updater>(
     updater_name,
     get_updater_minimal_rate(node, updater_name),
     core::localisation::to_trigger_mode(get_updater_trigger_mode(node, updater_name)),
     get_updater_mahalanobis_distance_rejection_threshold(node, updater_name),
-    get_log_filename(node, updater_name));
+    log_filename);
+}
+
+//-----------------------------------------------------------------------------
+template<class Updater>
+std::unique_ptr<Updater> make_kalman_exteroceptive_updater(
+  std::shared_ptr<rclcpp::Node> & node,
+  const std::string & updater_name)
+{
+  return make_kalman_exteroceptive_updater<Updater>(
+    node, updater_name, get_log_filename(node, updater_name));
 }
 
 //-----------------------------------------------------------------------------
 template<class Updater>
 std::unique_ptr<Updater> make_particle_exteroceptive_updater(
-  std::shared_ptr<rclcpp::Node> & node, const std::string & updater_name)
+  std::shared_ptr<rclcpp::Node> & node,
+  const std::string & updater_name,
+  const std::string & log_filename)
 {
   return std::make_unique<Updater>(
     updater_name,
@@ -56,19 +70,41 @@ std::unique_ptr<Updater> make_particle_exteroceptive_updater(
     core::localisation::to_trigger_mode(get_updater_trigger_mode(node, updater_name)),
     get_updater_mahalanobis_distance_rejection_threshold(node, updater_name),
     get_filter_number_of_particles(node),
-    get_log_filename(node, updater_name));
+    log_filename);
+}
+
+//-----------------------------------------------------------------------------
+template<class Updater>
+std::unique_ptr<Updater> make_particle_exteroceptive_updater(
+  std::shared_ptr<rclcpp::Node> & node,
+  const std::string & updater_name)
+{
+  return make_particle_exteroceptive_updater<Updater>(
+    node, updater_name, get_log_filename(node, updater_name));
 }
 
 //-----------------------------------------------------------------------------
 template<class Updater, core::FilterType FilterType_>
 std::unique_ptr<Updater> make_exteroceptive_updater(
-  std::shared_ptr<rclcpp::Node> & node, const std::string & updater_name)
+  std::shared_ptr<rclcpp::Node> & node,
+  const std::string & updater_name,
+  const std::string & log_filename)
 {
   if constexpr (FilterType_ == core::KALMAN) {
-    return make_kalman_exteroceptive_updater<Updater>(node, updater_name);
+    return make_kalman_exteroceptive_updater<Updater>(node, updater_name, log_filename);
   } else {
-    return make_particle_exteroceptive_updater<Updater>(node, updater_name);
+    return make_particle_exteroceptive_updater<Updater>(node, updater_name, log_filename);
   }
+}
+
+//-----------------------------------------------------------------------------
+template<class Updater, core::FilterType FilterType_>
+std::unique_ptr<Updater> make_exteroceptive_updater(
+  std::shared_ptr<rclcpp::Node> & node,
+  const std::string & updater_name)
+{
+  return make_exteroceptive_updater<Updater, FilterType_>(
+    node, updater_name, get_log_filename(node, updater_name));
 }
 
 //-----------------------------------------------------------------------------
