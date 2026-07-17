@@ -101,7 +101,8 @@ The `filter/localisation_factory.hpp` API creates core localisation components f
 | ----------------------- | ------- |
 | `make_filter` | A Kalman or particle filtering engine configured with the selected localisation state type. |
 | `make_predictor` | A predictor configured with dead-reckoning limits. |
-| `make_results` | Result containers matching the selected filter type. |
+| `make_meta_state` | Meta-state containers matching the selected filter type. |
+| `make_meta_state_to_results` | Converters from meta-state to public results. |
 | `make_proprioceptive_updater` | Updaters fed by proprioceptive observations such as twist or angular speed. |
 | `make_exteroceptive_updater` | Updaters fed by exteroceptive observations such as position, pose or range. |
 

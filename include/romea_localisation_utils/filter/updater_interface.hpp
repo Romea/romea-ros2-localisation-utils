@@ -112,12 +112,9 @@ void UpdaterInterface<Filter_, Updater_, Msg>::process_message(typename Msg::Con
     std::placeholders::_3);
 
   const auto process_status = filter_->process(duration, std::move(update_function));
-  if (process_status == core::FilterProcessStatus::OUT_OF_HISTORY) {
+  if (process_status == core::FilterProcessStatus::TOO_OLD) {
     RCLCPP_WARN_THROTTLE(
-      node_->get_logger(),
-      *node_->get_clock(),
-      5000,
-      "Discard observation because it is too old for the retained filter history");
+      node_->get_logger(), *node_->get_clock(), 5000, "Discard observation because it is too old");
   }
 }
 
