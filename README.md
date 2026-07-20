@@ -16,7 +16,7 @@ Localisation plugins publish typed observations as ROS2 messages. Localisation c
 ```mermaid
 flowchart LR
   subgraph ros2_messages["romea_localisation_msgs"]
-    msg["Observation messages<br/>status messages"]
+    msg["Observation messages"]
   end
 
   subgraph utils["romea_localisation_utils"]
@@ -67,7 +67,6 @@ The `conversions/` headers convert localisation messages to and from the corresp
 | `observation_position_conversions.hpp` | Converts 2D position observations. |
 | `observation_range_conversions.hpp` | Converts range observations. |
 | `observation_twist_conversions.hpp` | Converts 2D twist observations. |
-| `localisation_status_conversions.hpp` | Converts localisation finite-state-machine states to ROS2 status messages. |
 
 All observation conversions preserve the observation timestamp, frame information and uncertainty carried by the message.
 

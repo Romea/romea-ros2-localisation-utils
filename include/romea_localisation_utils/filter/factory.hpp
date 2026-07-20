@@ -24,6 +24,7 @@
 #include "parameters.hpp"
 #include "romea_common_utils/log/topic_logger.hpp"
 #include "romea_common_utils/params/algorithm_parameters.hpp"
+#include "romea_core_common/fsm/FSMEventNotifier.hpp"
 #include "romea_core_common/log/Logger.hpp"
 #include "romea_core_localisation/updater_trigger_mode.hpp"
 
@@ -53,7 +54,8 @@ template<class Updater>
 std::unique_ptr<Updater> make_kalman_exteroceptive_updater(
   std::shared_ptr<rclcpp::Node> & node,
   const std::string & updater_name,
-  std::shared_ptr<core::Logger> logger)
+  std::shared_ptr<core::Logger> logger,
+  core::FSMEventCallback fsm_event_callback = nullptr)
 {
   auto updater = std::make_unique<Updater>(
     updater_name,
@@ -62,6 +64,7 @@ std::unique_ptr<Updater> make_kalman_exteroceptive_updater(
     get_updater_mahalanobis_distance_rejection_threshold(node, updater_name));
 
   updater->register_logger(std::move(logger));
+  updater->register_fsm_event_callback(std::move(fsm_event_callback));
   return updater;
 }
 
@@ -79,7 +82,8 @@ template<class Updater>
 std::unique_ptr<Updater> make_particle_exteroceptive_updater(
   std::shared_ptr<rclcpp::Node> & node,
   const std::string & updater_name,
-  std::shared_ptr<core::Logger> logger)
+  std::shared_ptr<core::Logger> logger,
+  core::FSMEventCallback fsm_event_callback = nullptr)
 {
   auto updater = std::make_unique<Updater>(
     updater_name,
@@ -89,6 +93,7 @@ std::unique_ptr<Updater> make_particle_exteroceptive_updater(
     get_filter_number_of_particles(node));
 
   updater->register_logger(std::move(logger));
+  updater->register_fsm_event_callback(std::move(fsm_event_callback));
   return updater;
 }
 
@@ -106,12 +111,15 @@ template<class Updater, core::FilterType FilterType_>
 std::unique_ptr<Updater> make_exteroceptive_updater(
   std::shared_ptr<rclcpp::Node> & node,
   const std::string & updater_name,
-  std::shared_ptr<core::Logger> logger)
+  std::shared_ptr<core::Logger> logger,
+  core::FSMEventCallback fsm_event_callback = nullptr)
 {
   if constexpr (FilterType_ == core::KALMAN) {
-    return make_kalman_exteroceptive_updater<Updater>(node, updater_name, std::move(logger));
+    return make_kalman_exteroceptive_updater<Updater>(
+      node, updater_name, std::move(logger), std::move(fsm_event_callback));
   } else {
-    return make_particle_exteroceptive_updater<Updater>(node, updater_name, std::move(logger));
+    return make_particle_exteroceptive_updater<Updater>(
+      node, updater_name, std::move(logger), std::move(fsm_event_callback));
   }
 }
 
@@ -135,7 +143,9 @@ std::unique_ptr<Updater> make_proprioceptive_updater(
 //-----------------------------------------------------------------------------
 template<class Predictor>
 std::unique_ptr<Predictor> make_kalman_predictor(
-  std::shared_ptr<rclcpp::Node> & node, std::shared_ptr<core::Logger> logger)
+  std::shared_ptr<rclcpp::Node> & node,
+  std::shared_ptr<core::Logger> logger,
+  core::FSMEventCallback fsm_event_callback = nullptr)
 {
   auto predictor = std::make_unique<Predictor>(
     core::durationFromSecond(get_predictor_maximal_dead_reckoning_elapsed_time(node)),
@@ -143,6 +153,7 @@ std::unique_ptr<Predictor> make_kalman_predictor(
     get_predictor_maximal_circular_error_probable(node));
 
   predictor->register_logger(std::move(logger));
+  predictor->register_fsm_event_callback(std::move(fsm_event_callback));
   return predictor;
 }
 
@@ -156,7 +167,9 @@ std::unique_ptr<Predictor> make_kalman_predictor(std::shared_ptr<rclcpp::Node> &
 //-----------------------------------------------------------------------------
 template<class Predictor>
 std::unique_ptr<Predictor> make_particle_predictor(
-  std::shared_ptr<rclcpp::Node> & node, std::shared_ptr<core::Logger> logger)
+  std::shared_ptr<rclcpp::Node> & node,
+  std::shared_ptr<core::Logger> logger,
+  core::FSMEventCallback fsm_event_callback = nullptr)
 {
   auto predictor = std::make_unique<Predictor>(
     core::durationFromSecond(get_predictor_maximal_dead_reckoning_elapsed_time(node)),
@@ -165,6 +178,7 @@ std::unique_ptr<Predictor> make_particle_predictor(
     get_filter_number_of_particles(node));
 
   predictor->register_logger(std::move(logger));
+  predictor->register_fsm_event_callback(std::move(fsm_event_callback));
   return predictor;
 }
 
@@ -177,12 +191,16 @@ std::unique_ptr<Predictor> make_particle_predictor(std::shared_ptr<rclcpp::Node>
 
 //-----------------------------------------------------------------------------
 template<class Predictor, core::FilterType FilterType_>
-std::unique_ptr<Predictor> make_predictor(std::shared_ptr<rclcpp::Node> & node)
+std::unique_ptr<Predictor> make_predictor(
+  std::shared_ptr<rclcpp::Node> & node,
+  core::FSMEventCallback fsm_event_callback = nullptr)
 {
   if constexpr (FilterType_ == core::KALMAN) {
-    return make_kalman_predictor<Predictor>(node);
+    return make_kalman_predictor<Predictor>(
+      node, make_topic_logger(node, "predictor"), std::move(fsm_event_callback));
   } else {
-    return make_particle_predictor<Predictor>(node);
+    return make_particle_predictor<Predictor>(
+      node, make_topic_logger(node, "predictor"), std::move(fsm_event_callback));
   }
 }
 
@@ -214,10 +232,12 @@ std::unique_ptr<Filter> make_filter(std::shared_ptr<rclcpp::Node> node)
 
 //-----------------------------------------------------------------------------
 template<class Filter, class Predictor, core::FilterType FilterType_>
-std::unique_ptr<Filter> make_filter(std::shared_ptr<rclcpp::Node> node)
+std::unique_ptr<Filter> make_filter(
+  std::shared_ptr<rclcpp::Node> node,
+  core::FSMEventCallback fsm_event_callback = nullptr)
 {
   auto filter = make_filter<Filter, FilterType_>(node);
-  auto predictor = make_predictor<Predictor, FilterType_>(node);
+  auto predictor = make_predictor<Predictor, FilterType_>(node, std::move(fsm_event_callback));
   filter->register_predictor(std::move(predictor));
   return filter;
 }

@@ -30,7 +30,6 @@ find_package(romea_common_utils REQUIRED)
 find_package(romea_localisation_msgs REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
-  src/conversions/localisation_status_conversions.cpp
   src/conversions/observation_angular_speed_conversions.cpp
   src/conversions/observation_attitude_conversions.cpp
   src/conversions/observation_course_conversions.cpp
