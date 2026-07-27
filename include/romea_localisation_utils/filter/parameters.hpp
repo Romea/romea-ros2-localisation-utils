@@ -36,8 +36,7 @@ namespace localisation
 void declare_predictor_parameters(
   std::shared_ptr<rclcpp::Node> node,
   const double & defaul_maximal_dead_reckoning_travelled_distance,
-  const double & maximal_dead_reckoning_elapsed_time,
-  const double & maximal_circular_error_probable);
+  const double & maximal_dead_reckoning_elapsed_time);
 
 void declare_predictor_maximal_dead_reckoning_travelled_distance(
   std::shared_ptr<rclcpp::Node> node, const double & default_value);
@@ -48,11 +47,6 @@ void declare_predictor_maximal_dead_reckoning_elapsed_time(
   std::shared_ptr<rclcpp::Node> node, const double & default_value);
 
 double get_predictor_maximal_dead_reckoning_elapsed_time(std::shared_ptr<rclcpp::Node> node);
-
-void declare_predictor_maximal_circular_error_probable(
-  std::shared_ptr<rclcpp::Node> node, const double & default_value);
-
-double get_predictor_maximal_circular_error_probable(std::shared_ptr<rclcpp::Node> node);
 
 void declare_kalman_filter_parameters(std::shared_ptr<rclcpp::Node> node);
 

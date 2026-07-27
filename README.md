@@ -82,13 +82,12 @@ The `filter/localisation_parameters.hpp` API declares and reads the parameter gr
 | `filter.number_of_particles` | Particle assemblies | Number of particles used by particle filter implementations. |
 | `predictor.maximal_dead_recknoning_travelled_distance` | Predictors | Maximum travelled distance allowed in dead-reckoning mode. |
 | `predictor.maximal_dead_recknoning_elapsed_time` | Predictors | Maximum elapsed time allowed in dead-reckoning mode. |
-| `predictor.maximal_position_circular_error_probability` | Predictors | Maximum position uncertainty allowed in dead-reckoning mode. |
 
 ### 3.2) Updater parameters
 
 | Parameter | Used by | Description |
 | --------- | ------- | ----------- |
-| `<updater>.minimal_rate` | Proprioceptive and exteroceptive updaters | Minimal expected observation rate. A value of `0` is commonly used by localisation nodes to disable an updater. |
+| `<updater>.minimal_rate` | Proprioceptive and exteroceptive updaters | Minimal expected observation rate. A value of `0` disables the updater at node configuration level; constructed core updaters require a strictly positive rate. |
 | `<updater>.trigger` | Exteroceptive updaters | Update trigger mode, either `always` or `once`. |
 | `<updater>.mahalanobis_distance_rejection_threshold` | Exteroceptive updaters | Innovation rejection threshold used to discard outliers. |
 
@@ -126,7 +125,7 @@ A localisation node usually combines the utilities in this order:
 
 ```cpp
 declare_filter_parameters<core::FilterType::KALMAN>(node);
-declare_predictor_parameters(node, 2.0, 10.0, std::numeric_limits<double>::max());
+declare_predictor_parameters(node, 2.0, 10.0);
 
 auto filter = make_filter<Filter, Predictor, core::FilterType::KALMAN>(node);
 

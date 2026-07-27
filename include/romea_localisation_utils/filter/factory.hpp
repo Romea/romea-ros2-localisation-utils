@@ -26,6 +26,7 @@
 #include "romea_common_utils/params/algorithm_parameters.hpp"
 #include "romea_core_common/fsm/FSMEventNotifier.hpp"
 #include "romea_core_common/log/Logger.hpp"
+#include "romea_core_localisation/dead_reckoning_tracking.hpp"
 #include "romea_core_localisation/updater_trigger_mode.hpp"
 
 namespace romea
@@ -89,8 +90,8 @@ std::unique_ptr<Updater> make_particle_exteroceptive_updater(
     updater_name,
     get_updater_minimal_rate(node, updater_name),
     core::localisation::to_trigger_mode(get_updater_trigger_mode(node, updater_name)),
-    get_updater_mahalanobis_distance_rejection_threshold(node, updater_name),
-    get_filter_number_of_particles(node));
+    get_filter_number_of_particles(node),
+    get_updater_mahalanobis_distance_rejection_threshold(node, updater_name));
 
   updater->register_logger(std::move(logger));
   updater->register_fsm_event_callback(std::move(fsm_event_callback));
@@ -145,16 +146,32 @@ template<class Predictor>
 std::unique_ptr<Predictor> make_kalman_predictor(
   std::shared_ptr<rclcpp::Node> & node,
   std::shared_ptr<core::Logger> logger,
-  core::FSMEventCallback fsm_event_callback = nullptr)
+  core::FSMEventCallback fsm_event_callback,
+  const typename Predictor::ObservationAgeLimits & observation_age_limits)
 {
-  auto predictor = std::make_unique<Predictor>(
+  const core::localisation::DeadReckoningLimits dead_reckoning_limits(
     core::durationFromSecond(get_predictor_maximal_dead_reckoning_elapsed_time(node)),
-    get_predictor_maximal_dead_reckoning_travelled_distance(node),
-    get_predictor_maximal_circular_error_probable(node));
+    get_predictor_maximal_dead_reckoning_travelled_distance(node));
+
+  auto predictor = std::make_unique<Predictor>(dead_reckoning_limits, observation_age_limits);
 
   predictor->register_logger(std::move(logger));
   predictor->register_fsm_event_callback(std::move(fsm_event_callback));
   return predictor;
+}
+
+//-----------------------------------------------------------------------------
+template<class Predictor>
+std::unique_ptr<Predictor> make_kalman_predictor(
+  std::shared_ptr<rclcpp::Node> & node,
+  std::shared_ptr<core::Logger> logger,
+  core::FSMEventCallback fsm_event_callback = nullptr)
+{
+  return make_kalman_predictor<Predictor>(
+    node,
+    std::move(logger),
+    std::move(fsm_event_callback),
+    typename Predictor::ObservationAgeLimits());
 }
 
 //-----------------------------------------------------------------------------
@@ -169,17 +186,33 @@ template<class Predictor>
 std::unique_ptr<Predictor> make_particle_predictor(
   std::shared_ptr<rclcpp::Node> & node,
   std::shared_ptr<core::Logger> logger,
-  core::FSMEventCallback fsm_event_callback = nullptr)
+  core::FSMEventCallback fsm_event_callback,
+  const typename Predictor::ObservationAgeLimits & observation_age_limits)
 {
-  auto predictor = std::make_unique<Predictor>(
+  const core::localisation::DeadReckoningLimits dead_reckoning_limits(
     core::durationFromSecond(get_predictor_maximal_dead_reckoning_elapsed_time(node)),
-    get_predictor_maximal_dead_reckoning_travelled_distance(node),
-    get_predictor_maximal_circular_error_probable(node),
-    get_filter_number_of_particles(node));
+    get_predictor_maximal_dead_reckoning_travelled_distance(node));
+
+  auto predictor = std::make_unique<Predictor>(
+    get_filter_number_of_particles(node), dead_reckoning_limits, observation_age_limits);
 
   predictor->register_logger(std::move(logger));
   predictor->register_fsm_event_callback(std::move(fsm_event_callback));
   return predictor;
+}
+
+//-----------------------------------------------------------------------------
+template<class Predictor>
+std::unique_ptr<Predictor> make_particle_predictor(
+  std::shared_ptr<rclcpp::Node> & node,
+  std::shared_ptr<core::Logger> logger,
+  core::FSMEventCallback fsm_event_callback = nullptr)
+{
+  return make_particle_predictor<Predictor>(
+    node,
+    std::move(logger),
+    std::move(fsm_event_callback),
+    typename Predictor::ObservationAgeLimits());
 }
 
 //-----------------------------------------------------------------------------
@@ -193,15 +226,31 @@ std::unique_ptr<Predictor> make_particle_predictor(std::shared_ptr<rclcpp::Node>
 template<class Predictor, core::FilterType FilterType_>
 std::unique_ptr<Predictor> make_predictor(
   std::shared_ptr<rclcpp::Node> & node,
-  core::FSMEventCallback fsm_event_callback = nullptr)
+  core::FSMEventCallback fsm_event_callback,
+  const typename Predictor::ObservationAgeLimits & observation_age_limits)
 {
   if constexpr (FilterType_ == core::KALMAN) {
     return make_kalman_predictor<Predictor>(
-      node, make_topic_logger(node, "predictor"), std::move(fsm_event_callback));
+      node,
+      make_topic_logger(node, "predictor"),
+      std::move(fsm_event_callback),
+      observation_age_limits);
   } else {
     return make_particle_predictor<Predictor>(
-      node, make_topic_logger(node, "predictor"), std::move(fsm_event_callback));
+      node,
+      make_topic_logger(node, "predictor"),
+      std::move(fsm_event_callback),
+      observation_age_limits);
   }
+}
+
+//-----------------------------------------------------------------------------
+template<class Predictor, core::FilterType FilterType_>
+std::unique_ptr<Predictor> make_predictor(
+  std::shared_ptr<rclcpp::Node> & node, core::FSMEventCallback fsm_event_callback = nullptr)
+{
+  return make_predictor<Predictor, FilterType_>(
+    node, std::move(fsm_event_callback), typename Predictor::ObservationAgeLimits());
 }
 
 //-----------------------------------------------------------------------------
@@ -234,12 +283,23 @@ std::unique_ptr<Filter> make_filter(std::shared_ptr<rclcpp::Node> node)
 template<class Filter, class Predictor, core::FilterType FilterType_>
 std::unique_ptr<Filter> make_filter(
   std::shared_ptr<rclcpp::Node> node,
-  core::FSMEventCallback fsm_event_callback = nullptr)
+  core::FSMEventCallback fsm_event_callback,
+  const typename Predictor::ObservationAgeLimits & observation_age_limits)
 {
   auto filter = make_filter<Filter, FilterType_>(node);
-  auto predictor = make_predictor<Predictor, FilterType_>(node, std::move(fsm_event_callback));
+  auto predictor = make_predictor<Predictor, FilterType_>(
+    node, std::move(fsm_event_callback), observation_age_limits);
   filter->register_predictor(std::move(predictor));
   return filter;
+}
+
+//-----------------------------------------------------------------------------
+template<class Filter, class Predictor, core::FilterType FilterType_>
+std::unique_ptr<Filter> make_filter(
+  std::shared_ptr<rclcpp::Node> node, core::FSMEventCallback fsm_event_callback = nullptr)
+{
+  return make_filter<Filter, Predictor, FilterType_>(
+    node, std::move(fsm_event_callback), typename Predictor::ObservationAgeLimits());
 }
 
 //-----------------------------------------------------------------------------

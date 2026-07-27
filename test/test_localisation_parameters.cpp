@@ -68,13 +68,6 @@ TEST_F(TestLocalisationFilterParams, checkGetPredictorMaximalDeadReckoningElapse
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams, checkGetPredictorMaximalCircularErrorProbable)
-{
-  declare_predictor_maximal_circular_error_probable(node, std::numeric_limits<double>::max());
-  EXPECT_DOUBLE_EQ(get_predictor_maximal_circular_error_probable(node), 0.2);
-}
-
-//-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetFilternumber_of_particles)
 {
   declare_filter_number_of_particles(node);
@@ -89,7 +82,7 @@ TEST_F(TestLocalisationFilterParams, checkGetFilterStatePoolSize)
 }
 
 //-----------------------------------------------------------------------------
-TEST_F(TestLocalisationFilterParams, checkGetUpdatertrigger_mode)
+TEST_F(TestLocalisationFilterParams, checkGetUpdaterTriggerMode)
 {
   declare_updater_trigger_mode(node, "position_updater", "once");
   EXPECT_EQ(get_updater_trigger_mode(node, "position_updater"), "always");

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 // std
-#include <limits>
 #include <memory>
 #include <string>
 
@@ -30,8 +29,6 @@ const char PREDICTOR_MAXIMAL_DEAD_RECKONING_TRAVELLED_DISTANCE_PARAM_NAME[] =
   "predictor.maximal_dead_recknoning_travelled_distance";
 const char PREDICTOR_MAXIMAL_DEAD_RECKONING_ELAPSED_TIME_PARAM_NAME[] =
   "predictor.maximal_dead_recknoning_elapsed_time";
-const char PREDICTOR_MAXIMAL_POSITION_CIRCULAR_ERROR_PROBABLE_PARAM_NAME[] =
-  "predictor.maximal_position_circular_error_probability";
 
 const char FILTER_NUMBER_OF_PARTICLES_PARAM_NAME[] = "filter.number_of_particles";
 const char FILTER_STATE_POOL_SIZE_PARAM_NAME[] = "filter.state_pool_size";
@@ -54,13 +51,11 @@ namespace localisation
 void declare_predictor_parameters(
   std::shared_ptr<rclcpp::Node> node,
   const double & defaul_maximal_dead_reckoning_travelled_distance,
-  const double & maximal_dead_reckoning_elapsed_time,
-  const double & maximal_circular_error_probable)
+  const double & maximal_dead_reckoning_elapsed_time)
 {
   declare_predictor_maximal_dead_reckoning_travelled_distance(
     node, defaul_maximal_dead_reckoning_travelled_distance);
   declare_predictor_maximal_dead_reckoning_elapsed_time(node, maximal_dead_reckoning_elapsed_time);
-  declare_predictor_maximal_circular_error_probable(node, maximal_circular_error_probable);
 }
 
 //-----------------------------------------------------------------------------
@@ -91,20 +86,6 @@ double get_predictor_maximal_dead_reckoning_elapsed_time(std::shared_ptr<rclcpp:
 {
   return get_parameter<double>(node, PREDICTOR_MAXIMAL_DEAD_RECKONING_ELAPSED_TIME_PARAM_NAME);
 }
-//-----------------------------------------------------------------------------
-void declare_predictor_maximal_circular_error_probable(
-  std::shared_ptr<rclcpp::Node> node, const double & default_value)
-{
-  declare_parameter_with_default<double>(
-    node, PREDICTOR_MAXIMAL_POSITION_CIRCULAR_ERROR_PROBABLE_PARAM_NAME, default_value);
-}
-
-//-----------------------------------------------------------------------------
-double get_predictor_maximal_circular_error_probable(std::shared_ptr<rclcpp::Node> node)
-{
-  return get_parameter<double>(node, PREDICTOR_MAXIMAL_POSITION_CIRCULAR_ERROR_PROBABLE_PARAM_NAME);
-}
-
 //-----------------------------------------------------------------------------
 void declare_kalman_filter_parameters(std::shared_ptr<rclcpp::Node> node)
 {
