@@ -72,7 +72,7 @@ All observation conversions preserve the observation timestamp, frame informatio
 
 ## 3) Localisation parameters
 
-The `filter/localisation_parameters.hpp` API declares and reads the parameter groups shared by localisation filters and updater interfaces.
+The `filter/parameters.hpp` API declares and reads the parameter groups shared by localisation filters and updater interfaces.
 
 ### 3.1) Filter and predictor parameters
 
@@ -93,31 +93,29 @@ The `filter/localisation_parameters.hpp` API declares and reads the parameter gr
 
 ## 4) Factories
 
-The `filter/localisation_factory.hpp` API creates core localisation components from ROS2 node parameters.
+The `filter/factory.hpp` API creates core localisation components from ROS2 node parameters.
 
 | Factory function family | Creates |
 | ----------------------- | ------- |
-| `make_filter` | A Kalman or particle filtering engine configured with the selected localisation state type. |
+| `make_filter` | A Kalman or particle localisation filter wrapper configured with the selected predictor. |
 | `make_predictor` | A predictor configured with dead-reckoning limits. |
-| `make_meta_state` | Meta-state containers matching the selected filter type. |
-| `make_meta_state_to_results` | Converters from meta-state to public results. |
 | `make_proprioceptive_updater` | Updaters fed by proprioceptive observations such as twist or angular speed. |
 | `make_exteroceptive_updater` | Updaters fed by exteroceptive observations such as position, pose or range. |
+| `make_updater` | Selects the proprioceptive or exteroceptive updater factory from the updater inheritance. |
 
 The factory layer is templated so that localisation nodes can select the core filtering engine, predictor and updater types through their traits while keeping the ROS2 parameter handling reusable.
 
 ## 5) Updater interfaces
 
-`LocalisationUpdaterInterface` subscribes to one ROS2 observation topic and forwards each received observation to a core localisation filter.
+`UpdaterInterface` subscribes to one ROS2 observation topic and forwards each received observation through a callback returned by the core localisation filter.
 
 For each message:
 
 1. the timestamp is extracted from the ROS2 message;
 2. the message is converted to the corresponding core observation;
-3. the core updater update function is bound with this observation;
-4. the filter processes the update at the observation timestamp.
+3. the stored update callback sends the observation to the core filter at the observation timestamp.
 
-The interface also exposes heartbeat and diagnostic hooks so localisation nodes can report whether each configured observation stream is alive and arrives at the expected rate.
+The `UpdaterInterfaces` manager stores interface builders while the core filter is configured, then creates the ROS2 subscriptions after the filter has been initialized.
 
 ## 6) Typical use
 
@@ -127,15 +125,21 @@ A localisation node usually combines the utilities in this order:
 declare_filter_parameters<core::FilterType::KALMAN>(node);
 declare_predictor_parameters(node, 2.0, 10.0);
 
-auto filter = make_filter<Filter, Predictor, core::FilterType::KALMAN>(node);
+auto predictor = make_predictor<Predictor, core::FilterType::KALMAN>(node);
+auto filter = make_filter<Filter, core::FilterType::KALMAN>(node, std::move(predictor));
 
-auto updater = make_proprioceptive_updater<UpdaterTwist>(node, "twist_updater");
+auto updater = make_updater<UpdaterTwist, core::FilterType::KALMAN>(
+  node, "twist_updater", make_topic_logger(node, "twist_updater"));
+auto callback = filter->add_updater(std::move(updater));
 
-auto interface = make_updater_interface<UpdaterInterfaceTwist>(
-  node,
-  "twist",
-  filter,
-  std::move(updater));
+filter->initialize();
+
+UpdaterInterfaces updater_interfaces;
+if (callback) {
+  updater_interfaces.add<UpdaterInterfaceTwist>(
+    "twist_updater", "twist", std::move(*callback));
+}
+updater_interfaces.create(node);
 ```
 
 Concrete localisation core packages usually hide this boilerplate behind architecture-specific filter classes.

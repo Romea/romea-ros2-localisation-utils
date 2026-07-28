@@ -50,12 +50,22 @@ namespace localisation
 //-----------------------------------------------------------------------------
 void declare_predictor_parameters(
   std::shared_ptr<rclcpp::Node> node,
-  const double & defaul_maximal_dead_reckoning_travelled_distance,
+  const double & default_maximal_dead_reckoning_travelled_distance,
   const double & maximal_dead_reckoning_elapsed_time)
 {
+  declare_dead_reckoning_limits(
+    node, default_maximal_dead_reckoning_travelled_distance, maximal_dead_reckoning_elapsed_time);
+}
+
+//-----------------------------------------------------------------------------
+void declare_dead_reckoning_limits(
+  std::shared_ptr<rclcpp::Node> node,
+  const double & default_maximal_travelled_distance,
+  const double & maximal_elapsed_time)
+{
   declare_predictor_maximal_dead_reckoning_travelled_distance(
-    node, defaul_maximal_dead_reckoning_travelled_distance);
-  declare_predictor_maximal_dead_reckoning_elapsed_time(node, maximal_dead_reckoning_elapsed_time);
+    node, default_maximal_travelled_distance);
+  declare_predictor_maximal_dead_reckoning_elapsed_time(node, maximal_elapsed_time);
 }
 
 //-----------------------------------------------------------------------------
@@ -86,6 +96,16 @@ double get_predictor_maximal_dead_reckoning_elapsed_time(std::shared_ptr<rclcpp:
 {
   return get_parameter<double>(node, PREDICTOR_MAXIMAL_DEAD_RECKONING_ELAPSED_TIME_PARAM_NAME);
 }
+
+//-----------------------------------------------------------------------------
+core::localisation::DeadReckoningLimits get_dead_reckoning_limits(
+  std::shared_ptr<rclcpp::Node> node)
+{
+  return core::localisation::DeadReckoningLimits(
+    core::durationFromSecond(get_predictor_maximal_dead_reckoning_elapsed_time(node)),
+    get_predictor_maximal_dead_reckoning_travelled_distance(node));
+}
+
 //-----------------------------------------------------------------------------
 void declare_kalman_filter_parameters(std::shared_ptr<rclcpp::Node> node)
 {
