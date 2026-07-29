@@ -149,7 +149,6 @@ void declare_proprioceptive_updater_parameters(
   const std::string & updater_name,
   const unsigned int & default_minimal_rate)
 {
-  // declare_updater_topic_name(node, updater_name);
   declare_updater_minimal_rate(node, updater_name, default_minimal_rate);
 }
 
@@ -161,7 +160,6 @@ void declare_exteroceptive_updater_parameters(
   const std::string & default_trigger_mode,
   const double & default_mahalanobis_distance_rejection_threshold)
 {
-  // declare_updater_topic_name(node, updater_name);
   declare_updater_minimal_rate(node, updater_name, default_minimal_rate);
   declare_updater_trigger_mode(node, updater_name, default_trigger_mode);
   declare_updater_mahalanobis_distance_rejection_threshold(

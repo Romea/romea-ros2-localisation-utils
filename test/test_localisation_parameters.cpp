@@ -88,20 +88,6 @@ TEST_F(TestLocalisationFilterParams, checkGetUpdaterTriggerMode)
   EXPECT_EQ(get_updater_trigger_mode(node, "position_updater"), "always");
 }
 
-// //-----------------------------------------------------------------------------
-// TEST_F(TestLocalisationFilterParams, checkGetUpdaterTopicName)
-// {
-//   romea::declare_updater_topic_name(node, "pose_updater");
-//   EXPECT_EQ(romea::get_updater_topic_name(node, "pose_updater"), "pose");
-// }
-
-// //-----------------------------------------------------------------------------
-// TEST_F(TestLocalisationFilterParams, checkGetUpdaterEmptyTopicName)
-// {
-//   romea::declare_updater_topic_name(node, "foo");
-//   EXPECT_EQ(romea::get_updater_topic_name(node, "foo"), "");
-// }
-
 //-----------------------------------------------------------------------------
 TEST_F(TestLocalisationFilterParams, checkGetUpdaterminimal_rate)
 {

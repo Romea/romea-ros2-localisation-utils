@@ -6,7 +6,7 @@ It is not a runtime node package. It contains C++ utilities for:
 
 * converting between `romea_localisation_msgs` messages and `romea_core_localisation` observation types;
 * declaring and reading common localisation filter and updater parameters;
-* creating predictors and updaters from ROS2 parameters;
+* creating debug topic loggers for predictors and updaters;
 * creating localisation updater interfaces that subscribe to ROS2 observation topics and feed core localisation filters.
 
 ## 1) Role in the localisation stack
@@ -22,21 +22,19 @@ flowchart LR
   subgraph utils["romea_localisation_utils"]
     conversions["Conversions<br/>ROS2 messages <-> core types"]
     parameters["Parameters<br/>filters and updaters"]
-    factories["Factories<br/>predictors and updaters"]
+    loggers["Loggers<br/>debug topic loggers"]
     interfaces["UpdaterInterfaces<br/>deferred subscriptions and filter updates"]
   end
 
   subgraph core["romea_core_localisation"]
     observations["Core observations"]
-    predictors_and_updaters["Predictors<br/>and updaters"]
     filters["Core filter assemblies"]
   end
 
   msg -->|convert| conversions
   conversions -->|produce| observations
-  parameters -->|configure| factories
-  factories -->|create| predictors_and_updaters
-  predictors_and_updaters -->|assemble| filters
+  parameters -->|configure| filters
+  loggers -->|debug| filters
   msg -->|subscribe| interfaces
   interfaces -->|feed| filters
   observations -->|update| filters
@@ -46,8 +44,8 @@ flowchart LR
   classDef coreStyle fill:#f1eaff,stroke:#8b6fc6,color:#111,rx:6,ry:6
 
   class msg ros2
-  class conversions,parameters,factories,interfaces utilsStyle
-  class observations,filters,predictors_and_updaters coreStyle
+  class conversions,parameters,loggers,interfaces utilsStyle
+  class observations,filters coreStyle
 
   style ros2_messages fill:#f6faff,stroke:#9abbe3,rx:6,ry:6
   style utils fill:#f7fff7,stroke:#9ecf9e,rx:6,ry:6
@@ -93,18 +91,15 @@ The `filter/parameters.hpp` API declares and reads the parameter groups shared b
 | `<updater>.trigger` | Exteroceptive updaters | Update trigger mode, either `always` or `once`. |
 | `<updater>.mahalanobis_distance_rejection_threshold` | Exteroceptive updaters | Innovation rejection threshold used to discard outliers. |
 
-## 4) Factories
+## 4) Debug loggers
 
-The `filter/factory.hpp` API creates core localisation components from ROS2 node parameters.
+The `filter/loggers.hpp` API creates topic loggers used by core predictors and updaters when the node `debug` parameter is enabled.
 
-| Factory function family | Creates |
-| ----------------------- | ------- |
-| `make_predictor` | A predictor configured with dead-reckoning limits. |
-| `make_proprioceptive_updater` | Updaters fed by proprioceptive observations such as twist or angular speed. |
-| `make_exteroceptive_updater` | Updaters fed by exteroceptive observations such as position, pose or range. |
-| `make_updater` | Selects the proprioceptive or exteroceptive updater factory from the updater inheritance. |
+| Helper | Purpose |
+| ------ | ------- |
+| `make_topic_logger(node, logger_name)` | Returns a `TopicLogger` publishing on `debug/<logger_name>` when `debug=true`; otherwise returns `nullptr`. |
 
-The factory layer is templated so that localisation nodes can select the core filtering engine, predictor and updater types through their traits while keeping the ROS2 parameter handling reusable.
+Predictors and updaters are now created by `romea_core_localisation::Filter`, while this package keeps ROS2-side parameter handling, message conversion, debug loggers and updater interfaces reusable.
 
 ## 5) Updater interfaces
 
@@ -126,14 +121,16 @@ A localisation node usually combines the utilities in this order:
 declare_filter_parameters<core::FilterType::KALMAN>(node);
 declare_predictor_parameters(node, 2.0, 10.0);
 
-auto predictor = make_predictor<Predictor, core::FilterType::KALMAN>(node);
+using Traits = core::localisation::R2WTraits<core::FilterType::KALMAN>;
+using Filter = core::localisation::Filter<core::FilterType::KALMAN, Traits>;
+
 auto filter = std::make_unique<Filter>(
   get_filter_state_pool_size(node),
-  std::move(predictor));
+  get_dead_reckoning_limits(node));
 
-auto updater = make_updater<UpdaterTwist, core::FilterType::KALMAN>(
-  node, "twist_updater", make_topic_logger(node, "twist_updater"));
-auto callback = filter->add_updater(std::move(updater));
+auto callback = filter->add_proprioceptive_updater<Traits::UpdaterTwist>(
+  "twist_updater",
+  get_updater_minimal_rate(node, "twist_updater"));
 
 UpdaterInterfaces updater_interfaces;
 if (callback) {
@@ -141,11 +138,19 @@ if (callback) {
     "twist_updater", "twist", std::move(*callback));
 }
 
-filter->initialize();
+Filter::LoggerMap loggers = {
+  {"predictor", make_topic_logger(node, "predictor")},
+  {"twist_updater", make_topic_logger(node, "twist_updater")}};
+
+filter->initialize(
+  event_log_callback,
+  get_results_log_callback,
+  fsm_event_callback,
+  loggers);
 updater_interfaces.create(node);
 ```
 
-Concrete localisation core packages usually hide this boilerplate behind architecture-specific filter classes.
+Concrete localisation core packages hide this boilerplate behind architecture-specific filter classes. They add all updaters first, initialize the filter, and only then create the ROS2 subscriptions through `UpdaterInterfaces::create()`.
 
 ## License
 

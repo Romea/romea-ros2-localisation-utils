@@ -79,18 +79,10 @@ void declare_filter_state_pool_size(std::shared_ptr<rclcpp::Node> node);
 
 size_t get_filter_state_pool_size(std::shared_ptr<rclcpp::Node> node);
 
-// void declare_proprioceptive_updater_parameters(
-//   std::shared_ptr<rclcpp::Node> node,
-//   const std::string & updater_name);
-
 void declare_proprioceptive_updater_parameters(
   std::shared_ptr<rclcpp::Node> node,
   const std::string & updater_name,
   const unsigned int & default_minimal_rate);
-
-// void declare_exteroceptive_updater_parameters(
-//   std::shared_ptr<rclcpp::Node> node,
-//   const std::string & updater_name);
 
 void declare_exteroceptive_updater_parameters(
   std::shared_ptr<rclcpp::Node> node,
@@ -98,10 +90,6 @@ void declare_exteroceptive_updater_parameters(
   const unsigned int & default_minimal_rate,
   const std::string & default_trigger_mode,
   const double & default_mahalanobis_distance_rejection_threshold = 5.0);
-
-// void declare_updater_trigger_mode(
-//   std::shared_ptr<rclcpp::Node> node,
-//   const std::string & updater_name);
 
 void declare_updater_trigger_mode(
   std::shared_ptr<rclcpp::Node> node,
@@ -111,18 +99,6 @@ void declare_updater_trigger_mode(
 std::string get_updater_trigger_mode(
   std::shared_ptr<rclcpp::Node> node, const std::string & updater_name);
 
-// void declare_updater_topic_name(
-//   std::shared_ptr<rclcpp::Node> node,
-//   const std::string & updater_name);
-
-// std::string get_updater_topic_name(
-//   std::shared_ptr<rclcpp::Node> node,
-//   const std::string & updater_name);
-
-// void declare_updater_minimal_rate(
-//   std::shared_ptr<rclcpp::Node> node,
-//   const std::string & updater_name);
-
 void declare_updater_minimal_rate(
   std::shared_ptr<rclcpp::Node> node,
   const std::string & updater_name,
@@ -130,10 +106,6 @@ void declare_updater_minimal_rate(
 
 unsigned int get_updater_minimal_rate(
   std::shared_ptr<rclcpp::Node> node, const std::string & updater_name);
-
-// void declare_updater_mahalanobis_distance_rejection_threshold(
-//   std::shared_ptr<rclcpp::Node> node,
-//   const std::string & updater_name);
 
 void declare_updater_mahalanobis_distance_rejection_threshold(
   std::shared_ptr<rclcpp::Node> node,
