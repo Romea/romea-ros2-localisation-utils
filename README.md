@@ -6,7 +6,7 @@ It is not a runtime node package. It contains C++ utilities for:
 
 * converting between `romea_localisation_msgs` messages and `romea_core_localisation` observation types;
 * declaring and reading common localisation filter and updater parameters;
-* creating core filter assemblies from ROS2 parameters;
+* creating predictors and updaters from ROS2 parameters;
 * creating localisation updater interfaces that subscribe to ROS2 observation topics and feed core localisation filters.
 
 ## 1) Role in the localisation stack
@@ -22,20 +22,22 @@ flowchart LR
   subgraph utils["romea_localisation_utils"]
     conversions["Conversions<br/>ROS2 messages <-> core types"]
     parameters["Parameters<br/>filters and updaters"]
-    factories["Factories<br/>filter components, predictors, updaters"]
-    interfaces["Updater interfaces<br/>subscriptions and filter updates"]
+    factories["Factories<br/>predictors and updaters"]
+    interfaces["UpdaterInterfaces<br/>deferred subscriptions and filter updates"]
   end
 
   subgraph core["romea_core_localisation"]
     observations["Core observations"]
+    predictors_and_updaters["Predictors<br/>and updaters"]
     filters["Core filter assemblies"]
   end
 
   msg -->|convert| conversions
   conversions -->|produce| observations
   parameters -->|configure| factories
-  factories -->|create| filters
-  factories -->|create| interfaces
+  factories -->|create| predictors_and_updaters
+  predictors_and_updaters -->|assemble| filters
+  msg -->|subscribe| interfaces
   interfaces -->|feed| filters
   observations -->|update| filters
 
@@ -45,7 +47,7 @@ flowchart LR
 
   class msg ros2
   class conversions,parameters,factories,interfaces utilsStyle
-  class observations,filters coreStyle
+  class observations,filters,predictors_and_updaters coreStyle
 
   style ros2_messages fill:#f6faff,stroke:#9abbe3,rx:6,ry:6
   style utils fill:#f7fff7,stroke:#9ecf9e,rx:6,ry:6
@@ -97,7 +99,6 @@ The `filter/factory.hpp` API creates core localisation components from ROS2 node
 
 | Factory function family | Creates |
 | ----------------------- | ------- |
-| `make_filter` | A Kalman or particle localisation filter wrapper configured with the selected predictor. |
 | `make_predictor` | A predictor configured with dead-reckoning limits. |
 | `make_proprioceptive_updater` | Updaters fed by proprioceptive observations such as twist or angular speed. |
 | `make_exteroceptive_updater` | Updaters fed by exteroceptive observations such as position, pose or range. |
@@ -115,7 +116,7 @@ For each message:
 2. the message is converted to the corresponding core observation;
 3. the stored update callback sends the observation to the core filter at the observation timestamp.
 
-The `UpdaterInterfaces` manager stores interface builders while the core filter is configured, then creates the ROS2 subscriptions after the filter has been initialized.
+The `UpdaterInterfaces` manager stores interface builders while the core filter is configured. After all updaters have been added and the core filter has been initialized, `UpdaterInterfaces::create()` instantiates the ROS2 subscriptions. This ordering avoids callbacks reaching a filter before its predictor and updater constraints are fully configured.
 
 ## 6) Typical use
 
@@ -126,19 +127,21 @@ declare_filter_parameters<core::FilterType::KALMAN>(node);
 declare_predictor_parameters(node, 2.0, 10.0);
 
 auto predictor = make_predictor<Predictor, core::FilterType::KALMAN>(node);
-auto filter = make_filter<Filter, core::FilterType::KALMAN>(node, std::move(predictor));
+auto filter = std::make_unique<Filter>(
+  get_filter_state_pool_size(node),
+  std::move(predictor));
 
 auto updater = make_updater<UpdaterTwist, core::FilterType::KALMAN>(
   node, "twist_updater", make_topic_logger(node, "twist_updater"));
 auto callback = filter->add_updater(std::move(updater));
-
-filter->initialize();
 
 UpdaterInterfaces updater_interfaces;
 if (callback) {
   updater_interfaces.add<UpdaterInterfaceTwist>(
     "twist_updater", "twist", std::move(*callback));
 }
+
+filter->initialize();
 updater_interfaces.create(node);
 ```
 

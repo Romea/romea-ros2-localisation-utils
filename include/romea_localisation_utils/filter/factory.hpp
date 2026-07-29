@@ -190,20 +190,6 @@ std::unique_ptr<Predictor> make_predictor(std::shared_ptr<rclcpp::Node> node)
   }
 }
 
-//-----------------------------------------------------------------------------
-template<class Filter, core::FilterType FilterType_>
-std::unique_ptr<Filter> make_filter(
-  std::shared_ptr<rclcpp::Node> node,
-  std::unique_ptr<typename Filter::Predictor> predictor)
-{
-  if constexpr (FilterType_ == core::FilterType::KALMAN) {
-    return std::make_unique<Filter>(get_filter_state_pool_size(node), std::move(predictor));
-  } else {
-    return std::make_unique<Filter>(
-      get_filter_state_pool_size(node), get_filter_number_of_particles(node), std::move(predictor));
-  }
-}
-
 }  // namespace localisation
 }  // namespace ros2
 }  // namespace romea
